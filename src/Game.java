@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.HeadlessException;
 import java.awt.Image;
@@ -39,13 +40,18 @@ public class Game extends JFrame {
 		super("Poker Game");
         mainView.setLayout(new BoxLayout(mainView, BoxLayout.X_AXIS));
         chatView.setLayout(new BoxLayout(chatView, BoxLayout.Y_AXIS));
+        
+        cardView.setPreferredSize(new Dimension(600, 600));
+        cardView.setMaximumSize(new Dimension(600, 600));
+        chatView.setPreferredSize(new Dimension(200, 600));
+        chatView.setMaximumSize(new Dimension(200, 600));
+        
 		MenuItemListener menuItemListener = new MenuItemListener();
 		profile.addActionListener(menuItemListener);
 
 		// have a popup over the main window for login 
-		// then that will enable main window
+		// upon login the main window will be enabled
 	
-		
 		
 		menuBar.add(profile);
 		setJMenuBar(menuBar);
@@ -140,6 +146,7 @@ public class Game extends JFrame {
     
     public static void gameView(){
     	// this view will probably need something like GridBagLayout
+    	// probably best to make a Game JPanel 
 		JPanel gameView = new JPanel();
        
         

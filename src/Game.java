@@ -52,7 +52,10 @@ public class Game extends JFrame {
 		// have a popup over the main window for login 
 		// upon login the main window will be enabled
 	
+		ImageIcon logo = new ImageIcon("CardShark.png");
+		JMenuItem cardShark = new JMenuItem(logo);
 		
+		menuBar.add(cardShark);
 		menuBar.add(profile);
 		setJMenuBar(menuBar);
 		mainView.add(cardView);

@@ -10,6 +10,7 @@ import java.net.URL;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
@@ -23,10 +24,10 @@ public class Game extends JFrame {
     static JPanel chatView = new JPanel();
     static JPanel lobbyView = new JPanel();
     static JPanel gameView = new JPanel();
-    //static JPanel createGameView = new JPanel();
-    //static JPanel joinGameView = new JPanel();
-    //static JPanel profileView = new JPanel();
     static JMenuItem profile = new JMenuItem("Profile");
+    
+    static JButton createGameButton;
+    static JButton joinGameButton;
     
     final static String LOBBY = "Lobby";
     final static String GAME = "Game";
@@ -40,19 +41,19 @@ public class Game extends JFrame {
         chatView.setLayout(new BoxLayout(chatView, BoxLayout.Y_AXIS));
 		MenuItemListener menuItemListener = new MenuItemListener();
 		profile.addActionListener(menuItemListener);
-	
-		//cardView.add(lobbyView, LOBBY);
-		//cardView.add(gameView, GAME);
-		//cardView.add(createGameView, CREATEGAME);
-		//cardView.add(joinGameView, JOINGAME);
 
-		ButtonListener bl = new ButtonListener();
+		// have a popup over the main window for login 
+		// then that will enable main window
+	
+		
 		
 		menuBar.add(profile);
 		setJMenuBar(menuBar);
 		mainView.add(cardView);
 		mainView.add(chatView);
 		add(mainView);
+		lobbyView();
+		chatView();
         setVisible(true);
 	}
 
@@ -67,12 +68,30 @@ public class Game extends JFrame {
     class ButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent ae) {
             if(ae.getSource() == createGameButton){
+            	createGameView();
             }
                 
             else if(ae.getSource() == joinGameButton){
+            	joinGameView();
             }
 		}
 	}
+
+    public static void lobbyView(){
+		JPanel lobbyView = new JPanel();
+        lobbyView.setLayout(new BoxLayout(lobbyView, BoxLayout.Y_AXIS));
+		createGameButton = new JButton("Create Game");
+		joinGameButton = new JButton("Join Game");
+		// if(user is not logged in){
+		// 		createGameButton.setEnabled(false);
+		// 		joinGameButton.setEnabled(false);
+		lobbyView.add(createGameButton);
+		lobbyView.add(joinGameButton);
+		
+		cardView.add(lobbyView, LOBBY);
+    	CardLayout cl = (CardLayout)cardView.getLayout();
+        cl.show(cardView, LOBBY);
+    }
     
     public static void profileView(){
     	// TODO: retrieve latest statistics from database and display in snazzy JLabels
@@ -103,7 +122,22 @@ public class Game extends JFrame {
     	CardLayout cl = (CardLayout)cardView.getLayout();
         cl.show(cardView, PROFILE);
     }
-
+    
+    public static void chatView(){
+    	JLabel chatLabel = new JLabel("Chat");
+    	// if(user is logged in){
+    	// have a tabbed pane to toggle general chat and in-game chat
+    	// get list of friends
+    	// make a JButton for each friend that when clicked will call a function that refreshes the chat area 
+    	// those JButton's should be contained in a JScrollPane
+    	// below that should be the chat area
+    	// chat area would consist of JLabels of two different colors to differentiate sender
+    	// below that should be a text area to compose the message
+    	// we could just have a mnemonic for the Enter key to send message
+    	
+    	chatView.add(chatLabel);
+    }
+    
     public static void gameView(){
     	// this view will probably need something like GridBagLayout
 		JPanel gameView = new JPanel();

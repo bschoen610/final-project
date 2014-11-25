@@ -45,6 +45,9 @@ public class Game extends JFrame {
         cardView.setMaximumSize(new Dimension(600, 600));
         chatView.setPreferredSize(new Dimension(200, 600));
         chatView.setMaximumSize(new Dimension(200, 600));
+        this.setSize(800, 600);
+        this.setLocation(100, 100);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
 		MenuItemListener menuItemListener = new MenuItemListener();
 		profile.addActionListener(menuItemListener);
@@ -151,7 +154,7 @@ public class Game extends JFrame {
     	// this view will probably need something like GridBagLayout
     	// probably best to make a Game JPanel 
 		JPanel gameView = new JPanel();
-       
+     
         
 		cardView.add(gameView, GAME);
     	CardLayout cl = (CardLayout)cardView.getLayout();
@@ -178,8 +181,5 @@ public class Game extends JFrame {
     
 	public static void main(String[] args) {
 		Game game = new Game();
-        game.setSize(800, 600);
-        game.setLocation(100, 100);
-        game.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 }

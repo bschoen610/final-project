@@ -2,6 +2,8 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -16,9 +18,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 public class Game extends JFrame {
+	// TODO: my tendency is to make these variables static, but they may not need to be
     static JMenuBar menuBar = new JMenuBar();
     static JPanel mainView = new JPanel();
     static JPanel cardView = new JPanel(new CardLayout());
@@ -29,6 +35,13 @@ public class Game extends JFrame {
     
     static JButton createGameButton;
     static JButton joinGameButton;
+
+    static int chipCount;
+	static JLabel chipCountLabel;
+    static JButton exitButton;
+    static JButton doubleDownButton;
+    static JButton hitButton;
+    static JButton stayButton;
     
     final static String LOBBY = "Lobby";
     final static String GAME = "Game";
@@ -52,8 +65,23 @@ public class Game extends JFrame {
 		MenuItemListener menuItemListener = new MenuItemListener();
 		profile.addActionListener(menuItemListener);
 
-		// have a popup over the main window for login 
-		// upon login the main window will be enabled
+		// below is rudimentary login. Still needs option to register, etc.
+        JTextField username = new JTextField(20);
+        JPasswordField password = new JPasswordField(20);
+
+        JPanel loginPanel = new JPanel();
+        loginPanel.add(new JLabel("Username: "));
+        loginPanel.add(username);
+        loginPanel.add(new JLabel("Password: "));
+        loginPanel.add(password);
+
+        int result = JOptionPane.showConfirmDialog(null, loginPanel, "Please Enter Username and Password", JOptionPane.OK_CANCEL_OPTION);
+        if(result == JOptionPane.OK_OPTION){
+        	// attempt login
+        }
+        else{
+        	System.exit(0);
+        }
 	
 		ImageIcon logo = new ImageIcon("CardShark.png");
 		JMenuItem cardShark = new JMenuItem(logo);
@@ -77,23 +105,27 @@ public class Game extends JFrame {
 		}
 	}	
     
-    class ButtonListener implements ActionListener{
-		public void actionPerformed(ActionEvent ae) {
-            if(ae.getSource() == createGameButton){
-            	createGameView();
-            }
-                
-            else if(ae.getSource() == joinGameButton){
-            	joinGameView();
-            }
-		}
-	}
-
     public static void lobbyView(){
+        class LobbyButtonListener implements ActionListener{
+            public void actionPerformed(ActionEvent ae) {
+                if(ae.getSource() == createGameButton){
+                    gameView(); // this is just to test game view so eventually change back to:
+                    //createGameView();
+                }
+                    
+                else if(ae.getSource() == joinGameButton){
+                    joinGameView();
+                }
+            }
+        }
 		JPanel lobbyView = new JPanel();
         lobbyView.setLayout(new BoxLayout(lobbyView, BoxLayout.Y_AXIS));
+
+		LobbyButtonListener buttonListener = new LobbyButtonListener();
 		createGameButton = new JButton("Create Game");
 		joinGameButton = new JButton("Join Game");
+		createGameButton.addActionListener(buttonListener);
+		joinGameButton.addActionListener(buttonListener);
 		// if(user is not logged in){
 		// 		createGameButton.setEnabled(false);
 		// 		joinGameButton.setEnabled(false);
@@ -109,14 +141,13 @@ public class Game extends JFrame {
     	// TODO: retrieve latest statistics from database and display in snazzy JLabels
 		JPanel profileView = new JPanel();
         profileView.setLayout((new BoxLayout(profileView, BoxLayout.Y_AXIS)));
-        JLabel nameLabel = new JLabel("");
        
         /*
         JPanel avatar = new JPanel();
         avatar.setLayout(new BorderLayout());
         URL imageLink = null; 
         try {
-			imageLink = new URL(""); // access player avatar through URL
+			imageLink = new URL(""); // access player avatar through URL if possible
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -128,7 +159,27 @@ public class Game extends JFrame {
         JLabel imageLabel = new JLabel("", newIcon, JLabel.CENTER);
         avatar.add(imageLabel, BorderLayout.CENTER); 
         profileView.add(avatar);
+        
+        JLabel nameLabel = new JLabel(username);
+        profileView.add(nameLabel);
+
+        JLabel winsLabel = new JLabel(numWins);
+        profileView.add(winsLabel);
+
+        JLabel lossesLabel = new JLabel(numLosses);
+        profileView.add(lossesLabel);
+
+        JLabel gamesPlayedLabel = new JLabel(numGamesPlayed);
+        profileView.add(gamesPlayedLabel);
+
         */
+        JButton exitButton = new JButton("Exit");
+        exitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+               lobbyView(); 
+            }});
+        profileView.add(exitButton);
         
 		cardView.add(profileView, PROFILE);
     	CardLayout cl = (CardLayout)cardView.getLayout();
@@ -151,11 +202,67 @@ public class Game extends JFrame {
     }
     
     public static void gameView(){
-    	// this view will probably need something like GridBagLayout
-    	// probably best to make a Game JPanel 
-		JPanel gameView = new JPanel();
-     
+        class GameButtonListener implements ActionListener{
+            public void actionPerformed(ActionEvent ae) {
+                if(ae.getSource() == exitButton){
+                    //exitButton();
+                }
+                else if(ae.getSource() == doubleDownButton){
+                    //doubleDown();
+                }
+                else if(ae.getSource() == hitButton){
+                    //hit();
+                }
+                else if(ae.getSource() == stayButton){
+                    //stay();
+                }
+                // TODO: there is a fourth action button that I can't decipher from our whiteboard drawing
+            }
+        }
         
+		GamePanel gameView = new GamePanel(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints(); 
+		
+		chipCount = 0;
+		chipCountLabel = new JLabel(String.valueOf(chipCount));
+		gbc.gridx = 550;
+		gbc.gridy = 550;
+		gbc.gridwidth = 50;
+		gbc.gridheight = 50;
+		gameView.add(chipCountLabel, gbc);
+		
+		exitButton = new JButton("Exit"); 
+		gbc.gridx = 0;
+		gbc.gridy = 500;
+		gbc.gridwidth = 50;
+		gbc.gridheight = 100;
+		gameView.add(exitButton, gbc);
+		
+		doubleDownButton = new JButton("Double Down"); 
+		gbc.gridx = 200;
+		gbc.gridy = 550;
+		gbc.gridwidth = 50;
+		gbc.gridheight = 50;
+		gameView.add(doubleDownButton, gbc);
+		
+		hitButton = new JButton("Hit"); 
+		gbc.gridx = 250;
+		gbc.gridy = 550;
+		gbc.gridwidth = 50;
+		gbc.gridheight = 50;
+		gameView.add(hitButton, gbc);
+
+		stayButton = new JButton("Stay"); 
+		gbc.gridx = 300;
+		gbc.gridy = 550;
+		gbc.gridwidth = 50;
+		gbc.gridheight = 50;
+		gameView.add(stayButton, gbc);
+		
+		GameButtonListener gameButtonListener = new GameButtonListener();
+		exitButton.addActionListener(gameButtonListener);
+		doubleDownButton.addActionListener(gameButtonListener);
+		
 		cardView.add(gameView, GAME);
     	CardLayout cl = (CardLayout)cardView.getLayout();
         cl.show(cardView, GAME);

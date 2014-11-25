@@ -1,8 +1,8 @@
-package csci201.poker.library;
+package library;
 
 import java.util.Vector;
 
-public class PlayerContainer {
+public class PlayerContainer extends AbstractBean {
 	private Player smallBlindPlayer; 
 	private Player bigBlindPlayer; 
 	private Player currentPlayer;

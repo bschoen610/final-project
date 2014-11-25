@@ -1,6 +1,6 @@
-package csci201.poker.library;
+package library;
 
-public class GamePlay {
+public class GamePlay extends AbstractBean {
 	private int amountInPot;
 	private StateOfRound currentState; 
 	
@@ -56,7 +56,9 @@ public class GamePlay {
 	
 	public void nextState(){
 		//Tricking java is fun
+		StateOfRound oldState = this.currentState;
 		this.currentState = this.currentState.next(currentState);
+		this.getPcs().firePropertyChange("currentState", oldState, this.getCurrentState());
 	}
 
 	

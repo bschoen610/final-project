@@ -1,5 +1,5 @@
-package csci201.poker.library;
+package library;
 
-public class Dealer {
+public class Dealer extends AbstractBean {
 
 }

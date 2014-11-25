@@ -1,8 +1,8 @@
-package csci201.poker.library;
+package library;
 
 import java.util.Vector;
 
-public class Player {
+public class Player extends AbstractBean {
 	private Card card1; 
 	private Card card2; 
 	private Vector<Card> hand;
@@ -87,7 +87,7 @@ public class Player {
 	}
 	public void bet(int amount)
 	{
-		
+	
 	}
 	public void call(int amount)
 	{

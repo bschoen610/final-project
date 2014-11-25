@@ -1,6 +1,6 @@
-package csci201.poker.library;
+package library;
 
-public class Card implements Comparable<Card> {
+public class Card extends AbstractBean implements Comparable<Card> {
 
 	//http://sourceforge.net/p/jokera/code/ci/master/tree/src/mikejyg/playingCards/Card.java#l57
 	
@@ -9,7 +9,6 @@ public class Card implements Comparable<Card> {
 		DIAMOND(1, 'D'), 
 		HEART(2, 'H'),
 		SPADE(3, 'S');
-		
 		private final int intValue; 
 		private final Character symbol; 
 		

@@ -1,15 +1,16 @@
-package csci201.poker.library;
+package library;
 
 import java.util.Random;
 import java.util.Vector;
 
-public class DeckOfCards {
+public class DeckOfCards extends AbstractBean {
 	private Vector<Card> deckOfCards;
 	private Random random; 
 	
 	public DeckOfCards()
 	{
 		random = new Random(); 
+		
 	}
 
 	public Vector<Card> getDeckOfCards() {

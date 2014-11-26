@@ -1,8 +1,8 @@
 import java.awt.BorderLayout;
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Connection;
@@ -16,34 +16,40 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 public class LoginServer extends JFrame{
-	private JPanel main; private JTextArea serverView;
+	private static final long serialVersionUID = 1L;
+	private JPanel main;
+	private JTextArea serverView;
 	private Connection c;
+	
 	public LoginServer() {
 		super ("Login Server");
 		setSize(600,600);
 		setupGUI();
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		System.out.println("waiting");
 		try{
+			ServerSocket ss = new ServerSocket(60500);
 			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "3Rdplacespel");
-			ServerSocket ss = new ServerSocket(8000);
-			System.out.println("Server is running at port 8000.");
-			
-			while (true){
-				//Make the server wait while clients are being accepted.
-				serverView.append("Waiting for Connections...");
+		
+			while (true) {
 				Socket s = ss.accept();
-				serverView.append("Connection from " + s.getInetAddress());
-				BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-				DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+				BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));			
 				String un = br.readLine();
 				String pw = br.readLine();
-				dos.writeBoolean(authenticated(un, pw));
+				boolean auth = authenticated(un, pw);
+				PrintWriter pwr = new PrintWriter(s.getOutputStream());
+				pwr.println(auth);
+				pwr.flush();
 			}
+			
 		} catch(IOException ioe){
-			System.out.println("Server failed to start: " + ioe.getLocalizedMessage());
+			ioe.printStackTrace();
+			System.exit(1);
 		} catch (SQLException sqle) {
-			System.out.println("SQL error- failed to connect to DB: " + sqle.getMessage());
+			sqle.printStackTrace();
+			System.exit(1);
 		}
 	}
 	
@@ -57,13 +63,13 @@ public class LoginServer extends JFrame{
 			//Reset the iterator through the resultset.
 			rs.beforeFirst();
 			rs.next();
-			//Return true if password is correct.
+			//Return true if password is correct
 			if (pass.equals(rs.getString("password"))) return true;
 			//Wrong password.
 			else return false;
 		} catch (SQLException sqle) {
-			// TODO Auto-generated catch block
-			System.out.println("Authentication Error: " + sqle.getMessage());
+			sqle.printStackTrace();
+			System.exit(1);
 		}
 		
 		return true;
@@ -80,7 +86,8 @@ public class LoginServer extends JFrame{
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException cnfe){
-			System.out.println("Error with class " + cnfe.getMessage());
+			cnfe.printStackTrace();
+			System.exit(1);
 		}
 		new LoginServer();
 	}

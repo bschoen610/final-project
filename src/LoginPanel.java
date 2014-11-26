@@ -3,9 +3,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
@@ -23,8 +23,6 @@ public class LoginPanel extends JPanel implements ActionListener {
 	private JPasswordField password = new JPasswordField();
 	private JButton submit = new JButton("Submit");
 	private JButton register = new JButton("Register");
-	private DataInputStream dis;
-	private PrintWriter pw;
 	
 	public LoginPanel() {
 		GridBagConstraints c = new GridBagConstraints();
@@ -63,18 +61,8 @@ public class LoginPanel extends JPanel implements ActionListener {
 		this.submit.addActionListener(this);
 		this.register.setActionCommand("register");
 		this.register.addActionListener(this);
-		setupClient();
 	}
-
-	private void setupClient(){
-		try{
-			Socket s = new Socket("localhost", 8000);
-			this.dis = new DataInputStream(s.getInputStream());
-			this.pw = new PrintWriter(s.getOutputStream());
-		} catch (IOException ioe){
-			System.out.println ("Problem establishing connection from client: " + ioe.getMessage());
-		}
-	}
+	
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("submit")) {
 			this.submit();
@@ -94,25 +82,25 @@ public class LoginPanel extends JPanel implements ActionListener {
 			parent.validate();
 			parent.repaint();
 		}
-		else{
-			System.out.println("Incorrect username or password.");
-		}
 	}
 	
 	private boolean checkLogin(String uid, String pw) {
 		try {
-			this.pw.println(uid);
-			this.pw.println(pw);
-			this.pw.flush();
-			//Freeze the client until we can lookup the un/pw.
-			while(dis.available() == 0){}
-			return this.dis.readBoolean();
+			Socket s = new Socket("localhost", 60500);
+			PrintWriter pwr = new PrintWriter(s.getOutputStream());
+			pwr.println(uid);
+			pwr.println(pw);
+			pwr.flush();
+			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			String resultRaw = br.readLine();
+			return Boolean.parseBoolean(resultRaw);
 		} catch (IOException ioe) {
-			System.out.println("Error writing un/pw to Server: " + ioe.getMessage());
-			return false;
+			ioe.printStackTrace();
+			System.exit(1);
 		}
+		
+		return false;
 	}
-	
 	private void showRegister() {
 		Container parent = this.getParent();
 		parent.remove(this);

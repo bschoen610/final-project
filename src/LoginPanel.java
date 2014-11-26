@@ -69,7 +69,18 @@ public class LoginPanel extends JPanel implements ActionListener {
 	private void submit() {
 		String un = this.username.getText();
 		String pw = new String(this.password.getPassword());
-		// interface with RDBMS and switch if login is successful
+		
+		if (this.checkLogin(un, pw)) {
+			Container parent = this.getParent();
+			parent.remove(this);
+			parent.add(new GamePanel());
+			parent.validate();
+			parent.repaint();
+		}
+	}
+	
+	private boolean checkLogin(String un, String pw) {
+		return true;
 	}
 	
 	private void showRegister() {

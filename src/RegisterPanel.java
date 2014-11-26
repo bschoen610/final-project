@@ -68,16 +68,6 @@ public class RegisterPanel extends JPanel implements ActionListener {
 		
 		String un = this.username.getText();
 		
-		if (checkLogin(un, pwA)) {
-			Container parent = this.getParent();
-			parent.remove(this);
-			parent.add(new GamePanel());
-			parent.validate();
-			parent.repaint();
-		}
-	}
-	
-	private boolean checkLogin(String un, String pw) {
-		return true;
+		// send to DB
 	}
 }

@@ -26,19 +26,23 @@ public class LoginServer extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		try{
 			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "3Rdplacespel");
-			ServerSocket ss = new ServerSocket(8000);
-			System.out.println("Server is running at port 8000.");
+			ServerSocket ss = new ServerSocket(5555);
+			System.out.println("Server is running at port 5555.");
 			
 			while (true){
 				//Make the server wait while clients are being accepted.
 				serverView.append("Waiting for Connections...");
 				Socket s = ss.accept();
-				serverView.append("Connection from " + s.getInetAddress());
+				serverView.append("\nConnection from " + s.getInetAddress() + "\n");
 				BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 				DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 				String un = br.readLine();
 				String pw = br.readLine();
+				br.close();
 				dos.writeBoolean(authenticated(un, pw));
+				dos.flush();
+				dos.close();
+				ss.close();
 			}
 		} catch(IOException ioe){
 			System.out.println("Server failed to start: " + ioe.getLocalizedMessage());

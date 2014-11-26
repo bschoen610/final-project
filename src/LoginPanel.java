@@ -7,6 +7,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 import javax.swing.JButton;
@@ -25,7 +26,7 @@ public class LoginPanel extends JPanel implements ActionListener {
 	private JButton register = new JButton("Register");
 	private DataInputStream dis;
 	private PrintWriter pw;
-	
+	private Socket s;
 	public LoginPanel() {
 		GridBagConstraints c = new GridBagConstraints();
 		this.setLayout(new GridBagLayout());
@@ -68,12 +69,11 @@ public class LoginPanel extends JPanel implements ActionListener {
 
 	private void setupClient(){
 		try{
-			Socket s = new Socket("localhost", 8000);
-			this.dis = new DataInputStream(s.getInputStream());
-			this.pw = new PrintWriter(s.getOutputStream());
+			this.s = new Socket("localhost", 5555);
 		} catch (IOException ioe){
 			ioe.printStackTrace();
-			System.exit(0);
+			System.err.println(ioe.getMessage());
+
 		}
 	}
 	public void actionPerformed(ActionEvent e) {
@@ -96,14 +96,13 @@ public class LoginPanel extends JPanel implements ActionListener {
 		else{
 			System.out.println("Incorrect username or password.");
 		}
-		
-		Container parent = this.getParent();
-		parent.validate();
-		parent.repaint();
 	}
 	
 	private boolean checkLogin(String uid, String pw) {
 		try {
+			this.dis = new DataInputStream(s.getInputStream());
+			this.pw = new PrintWriter(s.getOutputStream());
+			
 			this.pw.println(uid);
 			this.pw.println(pw);
 			this.pw.flush();

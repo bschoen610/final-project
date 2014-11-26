@@ -28,7 +28,6 @@ public class LoginServer extends JFrame{
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		System.out.println("waiting");
 		try{
 			ServerSocket ss = new ServerSocket(60500);
 			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "3Rdplacespel");
@@ -45,10 +44,10 @@ public class LoginServer extends JFrame{
 			}
 			
 		} catch(IOException ioe){
-			ioe.printStackTrace();
+			System.out.println("IO Error: " + ioe.getMessage());
 			System.exit(1);
 		} catch (SQLException sqle) {
-			sqle.printStackTrace();
+			System.out.println("SQL Error: " + sqle.getMessage());
 			System.exit(1);
 		}
 	}

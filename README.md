@@ -1,6 +1,5 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
-HI!  I AM COW!
 =======
 ## CSCI 201L Final Project
 

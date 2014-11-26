@@ -1,3 +1,4 @@
+=======
 ## CSCI 201L Final Project
 
 ### Card Shark
@@ -9,3 +10,5 @@
 ######  Siddharth Manoj
 ######  Garrett Oldani
 ######  Benjamin Schoen
+=======
+

@@ -1,5 +1,8 @@
+import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -8,7 +11,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-public class RegisterPanel extends JPanel {
+public class RegisterPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = -3831920790532914938L;
 	
 	private JTextField username = new JTextField();
@@ -52,5 +55,19 @@ public class RegisterPanel extends JPanel {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridwidth = 2;
 		this.add(this.submit, c);
+		this.submit.addActionListener(this);
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		String pwA = new String(this.passwordA.getPassword());
+		String pwB = new String(this.passwordB.getPassword());
+		
+		if (! pwA.equals(pwB)) {
+			return;
+		}
+		
+		String un = this.username.getText();
+		
+		// send to DB
 	}
 }

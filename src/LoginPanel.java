@@ -3,6 +3,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -18,7 +23,9 @@ public class LoginPanel extends JPanel implements ActionListener {
 	private JPasswordField password = new JPasswordField();
 	private JButton submit = new JButton("Submit");
 	private JButton register = new JButton("Register");
-
+	private DataInputStream dis;
+	private PrintWriter pw;
+	
 	public LoginPanel() {
 		GridBagConstraints c = new GridBagConstraints();
 		this.setLayout(new GridBagLayout());
@@ -56,8 +63,18 @@ public class LoginPanel extends JPanel implements ActionListener {
 		this.submit.addActionListener(this);
 		this.register.setActionCommand("register");
 		this.register.addActionListener(this);
+		setupClient();
 	}
 
+	private void setupClient(){
+		try{
+			Socket s = new Socket("localhost", 8000);
+			this.dis = new DataInputStream(s.getInputStream());
+			this.pw = new PrintWriter(s.getOutputStream());
+		} catch (IOException ioe){
+			System.out.println ("Problem establishing connection from client: " + ioe.getMessage());
+		}
+	}
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("submit")) {
 			this.submit();
@@ -77,10 +94,23 @@ public class LoginPanel extends JPanel implements ActionListener {
 			parent.validate();
 			parent.repaint();
 		}
+		else{
+			System.out.println("Incorrect username or password.");
+		}
 	}
 	
-	private boolean checkLogin(String un, String pw) {
-		return true;
+	private boolean checkLogin(String uid, String pw) {
+		try {
+			this.pw.println(uid);
+			this.pw.println(pw);
+			this.pw.flush();
+			//Freeze the client until we can lookup the un/pw.
+			while(dis.available() == 0){}
+			return this.dis.readBoolean();
+		} catch (IOException ioe) {
+			System.out.println("Error writing un/pw to Server: " + ioe.getMessage());
+			return false;
+		}
 	}
 	
 	private void showRegister() {

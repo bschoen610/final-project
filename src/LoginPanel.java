@@ -1,5 +1,8 @@
+import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -8,7 +11,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-public class LoginPanel extends JPanel {
+public class LoginPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 763422554098991814L;
 	
 	private JTextField username = new JTextField();
@@ -49,5 +52,31 @@ public class LoginPanel extends JPanel {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridwidth = 2;
 		this.add(this.register, c);
+		this.submit.setActionCommand("submit");
+		this.submit.addActionListener(this);
+		this.register.setActionCommand("register");
+		this.register.addActionListener(this);
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().equals("submit")) {
+			this.submit();
+		} else if (e.getActionCommand().equals("register")) {
+			this.showRegister();
+		}
+	}
+	
+	private void submit() {
+		String un = this.username.getText();
+		String pw = new String(this.password.getPassword());
+		// interface with RDBMS and switch if login is successful
+	}
+	
+	private void showRegister() {
+		Container parent = this.getParent();
+		parent.remove(this);
+		parent.add(new RegisterPanel());
+		parent.validate();
+		parent.repaint();
 	}
 }

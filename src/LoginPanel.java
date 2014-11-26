@@ -3,12 +3,15 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+<<<<<<< HEAD
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+=======
+>>>>>>> parent of 468c8b6... Merge branch 'master' of github.com:csci201/final-project
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -24,9 +27,13 @@ public class LoginPanel extends JPanel implements ActionListener {
 	private JPasswordField password = new JPasswordField();
 	private JButton submit = new JButton("Submit");
 	private JButton register = new JButton("Register");
+<<<<<<< HEAD
 	private DataInputStream dis;
 	private PrintWriter pw;
 	private Socket s;
+=======
+
+>>>>>>> parent of 468c8b6... Merge branch 'master' of github.com:csci201/final-project
 	public LoginPanel() {
 		GridBagConstraints c = new GridBagConstraints();
 		this.setLayout(new GridBagLayout());
@@ -64,9 +71,9 @@ public class LoginPanel extends JPanel implements ActionListener {
 		this.submit.addActionListener(this);
 		this.register.setActionCommand("register");
 		this.register.addActionListener(this);
-		setupClient();
 	}
 
+<<<<<<< HEAD
 	private void setupClient(){
 		try{
 			this.s = new Socket("localhost", 5555);
@@ -76,6 +83,8 @@ public class LoginPanel extends JPanel implements ActionListener {
 
 		}
 	}
+=======
+>>>>>>> parent of 468c8b6... Merge branch 'master' of github.com:csci201/final-project
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("submit")) {
 			this.submit();
@@ -93,11 +102,9 @@ public class LoginPanel extends JPanel implements ActionListener {
 			parent.remove(this);
 			parent.add(new LobbyPanel());
 		}
-		else{
-			System.out.println("Incorrect username or password.");
-		}
 	}
 	
+<<<<<<< HEAD
 	private boolean checkLogin(String uid, String pw) {
 		try {
 			this.dis = new DataInputStream(s.getInputStream());
@@ -115,6 +122,10 @@ public class LoginPanel extends JPanel implements ActionListener {
 			System.out.println("Error writing un/pw to Server: " + ioe.getMessage());
 			return false;
 		}
+=======
+	private boolean checkLogin(String un, String pw) {
+		return true;
+>>>>>>> parent of 468c8b6... Merge branch 'master' of github.com:csci201/final-project
 	}
 	
 	private void showRegister() {

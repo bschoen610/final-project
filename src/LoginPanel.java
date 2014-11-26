@@ -73,7 +73,7 @@ public class LoginPanel extends JPanel implements ActionListener {
 		if (this.checkLogin(un, pw)) {
 			Container parent = this.getParent();
 			parent.remove(this);
-			parent.add(new GamePanel());
+			parent.add(new LobbyPanel());
 			parent.validate();
 			parent.repaint();
 		}

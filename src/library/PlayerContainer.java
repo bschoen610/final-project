@@ -3,13 +3,12 @@ package library;
 import java.util.Vector;
 
 public class PlayerContainer extends AbstractBean {
-	private Player smallBlindPlayer; 
-	private Player bigBlindPlayer; 
+	 
 	private Player currentPlayer;
 	
 	private Vector<Player> playerContainer; 
 	
-	
+
 	public PlayerContainer()
 	{
 		playerContainer = new Vector<Player>();
@@ -39,18 +38,7 @@ public class PlayerContainer extends AbstractBean {
 		else{
 			return playerContainer.get(0); 
 		}
-	}
-	public Player getSmallBlindPlayer() {
-		return smallBlindPlayer;
-	}
-	public void setSmallBlindPlayer(Player smallBlindPlayer) {
-		this.smallBlindPlayer = smallBlindPlayer;
-	}
-	public Player getBigBlindPlayer() {
-		return bigBlindPlayer;
-	}
-	public void setBigBlindPlayer(Player bigBlindPlayer) {
-		this.bigBlindPlayer = bigBlindPlayer;
+	
 	}
 	public Player getCurrentPlayer() {
 		return currentPlayer;
@@ -58,4 +46,12 @@ public class PlayerContainer extends AbstractBean {
 	public void setCurrentPlayer(Player currentPlayer) {
 		this.currentPlayer = currentPlayer;
 	} 
+	
+	public Vector<Player> getPlayerContainer() {
+		return playerContainer;
+	}
+
+	public void setPlayerContainer(Vector<Player> playerContainer) {
+		this.playerContainer = playerContainer;
+	}
 }

@@ -3,14 +3,33 @@ package library;
 import java.util.Random;
 import java.util.Vector;
 
+import library.Card.Rank;
+import library.Card.Suit;
+
 public class DeckOfCards extends AbstractBean {
 	private Vector<Card> deckOfCards;
 	private Random random; 
 	
 	public DeckOfCards()
 	{
-		random = new Random(); 
-		
+		random = new Random();
+		// create all cards that will be used in game, equal number of every card based on suit and rank 
+		//we need to decide how many decks we want to play with, anywhere from 1-8
+		deckOfCards = new Vector<Card>();
+		int numberOfDecks = 5;
+		for(int i = 0; i < numberOfDecks; i++)
+		{
+			for (int k = 0; k < 4; k ++)
+			{
+				for(int j = 2; j < 15; j++)
+				{
+					Card card = new Card(Rank.getRank(j), Suit.getSuit(k));
+					deckOfCards.add(card);
+				}
+
+			}
+		}
+		this.shuffle();
 	}
 
 	public Vector<Card> getDeckOfCards() {
@@ -52,7 +71,7 @@ public class DeckOfCards extends AbstractBean {
 	}
 	
 	
-	
-	//In constructor create all 52 cards of different rank and suit. 
+	//TODO write logic for when deck has to be reconstructed
+	//how many cards left should there be when this happens? Maybe add a cardsLeft int variable 
 
 }

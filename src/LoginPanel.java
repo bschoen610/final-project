@@ -72,7 +72,8 @@ public class LoginPanel extends JPanel implements ActionListener {
 			this.dis = new DataInputStream(s.getInputStream());
 			this.pw = new PrintWriter(s.getOutputStream());
 		} catch (IOException ioe){
-			System.out.println ("Problem establishing connection from client: " + ioe.getMessage());
+			ioe.printStackTrace();
+			System.exit(0);
 		}
 	}
 	public void actionPerformed(ActionEvent e) {
@@ -91,12 +92,14 @@ public class LoginPanel extends JPanel implements ActionListener {
 			Container parent = this.getParent();
 			parent.remove(this);
 			parent.add(new LobbyPanel());
-			parent.validate();
-			parent.repaint();
 		}
 		else{
 			System.out.println("Incorrect username or password.");
 		}
+		
+		Container parent = this.getParent();
+		parent.validate();
+		parent.repaint();
 	}
 	
 	private boolean checkLogin(String uid, String pw) {
@@ -105,7 +108,9 @@ public class LoginPanel extends JPanel implements ActionListener {
 			this.pw.println(pw);
 			this.pw.flush();
 			//Freeze the client until we can lookup the un/pw.
-			while(dis.available() == 0){}
+			while(dis.available() == 0){
+				System.out.println("issue");
+			}
 			return this.dis.readBoolean();
 		} catch (IOException ioe) {
 			System.out.println("Error writing un/pw to Server: " + ioe.getMessage());

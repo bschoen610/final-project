@@ -12,7 +12,6 @@ public class Card extends AbstractBean implements Comparable<Card> {
 		private final int intValue; 
 		private final Character symbol; 
 		
-		@SuppressWarnings("unused")
 		private static Suit[] suitArray = {SPADE, HEART, DIAMOND, CLUB};
 		
 		private Suit(int intValue, Character symbol)
@@ -29,10 +28,10 @@ public class Card extends AbstractBean implements Comparable<Card> {
 			return symbol;
 		}
 		
-		//static public Suit getSuit(int suit)
-		//{
-			//return suitArray[suit];
-		//}
+		static public Suit getSuit(int suit)
+		{
+			return suitArray[suit];
+		}
 		
 	}
 	
@@ -46,10 +45,10 @@ public class Card extends AbstractBean implements Comparable<Card> {
 		EIGHT(8, '8'),
 		NINE(9, '9'),
 		TEN(10, 'T'),
-		JACK(11, 'J'),
-		QUEEN(12, 'Q'),
-		KING(13, 'K'),
-		ACE(14, 'A');
+		JACK(10, 'J'),
+		QUEEN(10, 'Q'),
+		KING(10, 'K'),
+		ACE(11, 'A');
 		
 		private final int intValue; 
 		private final Character symbol; 
@@ -60,7 +59,7 @@ public class Card extends AbstractBean implements Comparable<Card> {
 			this.symbol = symbol; 
 		}
 
-		public int getIntValue() {
+		public int getValue() {
 			return intValue;
 		}
 
@@ -69,7 +68,7 @@ public class Card extends AbstractBean implements Comparable<Card> {
 		}
 		
 		//ace can hold the value of the first card or the greatest card
-		//aces can start a straight of ace, 2, 3, 4, 5 AND can end a straight of 10, jack, queen, king, ACE
+		//aces can count as 1 or 11
 		private static final Rank[] rankArray = {null, ACE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING, ACE};
 		
 		public static Rank getRank(int intValue)

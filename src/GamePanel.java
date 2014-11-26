@@ -29,15 +29,15 @@ public class GamePanel extends JPanel {
         g2.setPaint(Color.BLACK);
         g2.draw(pokerTable);
 	}
-	
+
 	public Dimension getMinimumSize() {
         return new Dimension(600, 600);
     }
-	
+
 	public Dimension getMaximumSize() {
         return new Dimension(600, 600);
     }
-	
+
 	public Dimension getPreferredSize() {
         return new Dimension(600, 600);
     }

@@ -3,15 +3,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-<<<<<<< HEAD
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
-=======
->>>>>>> parent of 468c8b6... Merge branch 'master' of github.com:csci201/final-project
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -27,13 +23,7 @@ public class LoginPanel extends JPanel implements ActionListener {
 	private JPasswordField password = new JPasswordField();
 	private JButton submit = new JButton("Submit");
 	private JButton register = new JButton("Register");
-<<<<<<< HEAD
-	private DataInputStream dis;
-	private PrintWriter pw;
-	private Socket s;
-=======
-
->>>>>>> parent of 468c8b6... Merge branch 'master' of github.com:csci201/final-project
+	
 	public LoginPanel() {
 		GridBagConstraints c = new GridBagConstraints();
 		this.setLayout(new GridBagLayout());
@@ -72,19 +62,7 @@ public class LoginPanel extends JPanel implements ActionListener {
 		this.register.setActionCommand("register");
 		this.register.addActionListener(this);
 	}
-
-<<<<<<< HEAD
-	private void setupClient(){
-		try{
-			this.s = new Socket("localhost", 5555);
-		} catch (IOException ioe){
-			ioe.printStackTrace();
-			System.err.println(ioe.getMessage());
-
-		}
-	}
-=======
->>>>>>> parent of 468c8b6... Merge branch 'master' of github.com:csci201/final-project
+	
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("submit")) {
 			this.submit();
@@ -101,33 +79,28 @@ public class LoginPanel extends JPanel implements ActionListener {
 			Container parent = this.getParent();
 			parent.remove(this);
 			parent.add(new LobbyPanel());
+			parent.validate();
+			parent.repaint();
 		}
 	}
 	
-<<<<<<< HEAD
 	private boolean checkLogin(String uid, String pw) {
 		try {
-			this.dis = new DataInputStream(s.getInputStream());
-			this.pw = new PrintWriter(s.getOutputStream());
-			
-			this.pw.println(uid);
-			this.pw.println(pw);
-			this.pw.flush();
-			//Freeze the client until we can lookup the un/pw.
-			while(dis.available() == 0){
-				System.out.println("issue");
-			}
-			return this.dis.readBoolean();
+			Socket s = new Socket("localhost", 60500);
+			PrintWriter pwr = new PrintWriter(s.getOutputStream());
+			pwr.println(uid);
+			pwr.println(pw);
+			pwr.flush();
+			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			String resultRaw = br.readLine();
+			return Boolean.parseBoolean(resultRaw);
 		} catch (IOException ioe) {
-			System.out.println("Error writing un/pw to Server: " + ioe.getMessage());
-			return false;
+			ioe.printStackTrace();
+			System.exit(1);
 		}
-=======
-	private boolean checkLogin(String un, String pw) {
-		return true;
->>>>>>> parent of 468c8b6... Merge branch 'master' of github.com:csci201/final-project
+		
+		return false;
 	}
-	
 	private void showRegister() {
 		Container parent = this.getParent();
 		parent.remove(this);

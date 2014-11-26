@@ -3,6 +3,7 @@
 
 ### Card Shark
 
+
 ### Team Members:
 ######  William Alexander
 ######  Sayantan Chakraborty
@@ -12,4 +13,8 @@
 ######  Benjamin Schoen
 =======
 
-#Cows are cool.
+Instructions to keep your forked repo up-to-date with master:
+
+1. git fetch upstream
+2. git merge upstream/master
+3. git push

@@ -1,3 +1,4 @@
+package server;
 import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class RegisterServer extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		try{
 			ServerSocket ss = new ServerSocket(60501);
-			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "3Rdplacespel");
+			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "root");
 		
 		
 			while(true){

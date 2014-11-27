@@ -1,3 +1,4 @@
+package server;
 import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class LoginServer extends JFrame{
 		
 		try{
 			ServerSocket ss = new ServerSocket(60500);
-			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "3Rdplacespel");
+			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "root");
 		
 			while (true) {
 				Socket s = ss.accept();

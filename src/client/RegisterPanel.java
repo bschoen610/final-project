@@ -1,3 +1,5 @@
+package client;
+import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -10,6 +12,7 @@ import java.net.Socket;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -110,11 +113,16 @@ public class RegisterPanel extends JPanel implements ActionListener {
 		String email = emailForm.getText();
 		if (addUser(firstName, lastName, un, password, email)){
 			//Show the login screen again.  User has been successfully added.
-			System.out.println("User added successfully!")
+			System.out.println("User added successfully!");
+			Container parent = this.getParent();
+			parent.remove(this);
+			parent.add(new LoginPanel());
+			parent.validate();
+			parent.repaint();
 		}
 		else{
 			//Make some popup that says that the username already exists.
-			System.out.println("Username/email already exists!");
+			JOptionPane.showMessageDialog(this, "Username or email already exists!");
 		}
 		
 	}

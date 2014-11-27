@@ -1,3 +1,4 @@
+package client;
 import javax.swing.JFrame;
 
 

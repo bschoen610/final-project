@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import client.GamePanel;
+
 public class Game extends JFrame {
 	// TODO: my tendency is to make these variables static, but they may not need to be
     static JMenuBar menuBar = new JMenuBar();

@@ -23,7 +23,7 @@ public class LoginRegisterServer extends JFrame{
 	private Connection c;
 	
 	public LoginRegisterServer() {
-		super ("Login Server");
+		super ("Login and Registration Server");
 		setSize(600,600);
 		setupGUI();
 		setVisible(true);

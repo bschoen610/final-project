@@ -35,6 +35,7 @@ public class RegisterPanel extends JPanel implements ActionListener {
 		c.gridx = 0;
 		c.gridy = 0;
 		c.weightx = 0.0;
+		c.fill = GridBagConstraints.HORIZONTAL;
 		this.add(new JLabel("First Name", SwingConstants.RIGHT), c);
 		c.gridx = 1;
 		c.gridy = 0;

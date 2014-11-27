@@ -30,6 +30,7 @@ public class LoginServer extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		try{
+			@SuppressWarnings("resource")
 			ServerSocket ss = new ServerSocket(60500);
 			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "root");
 		

@@ -139,6 +139,7 @@ public class RegisterPanel extends JPanel implements ActionListener {
 			pwr.flush();
 			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 			String resultRaw = br.readLine();
+			s.close();
 			return Boolean.parseBoolean(resultRaw);
 		} catch(IOException ioe){
 			ioe.printStackTrace();

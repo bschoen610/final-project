@@ -4,17 +4,15 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
 import java.awt.LayoutManager;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel {
-    
+	private static final long serialVersionUID = 1L;
+
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;

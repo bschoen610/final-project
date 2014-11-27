@@ -70,14 +70,20 @@ public class Game extends JFrame {
         loginPanel.add(username);
         loginPanel.add(new JLabel("Password: "));
         loginPanel.add(password);
-
-        int result = JOptionPane.showConfirmDialog(null, loginPanel, "Please Enter Username and Password", JOptionPane.OK_CANCEL_OPTION);
-        if(result == JOptionPane.OK_OPTION){
-        	// attempt login
-        }
-        else{
-        	System.exit(0);
-        }
+        do{
+	        int result = JOptionPane.showConfirmDialog(null, loginPanel, "Please Enter Username and Password", JOptionPane.OK_CANCEL_OPTION);
+	        if(result == JOptionPane.OK_OPTION){
+	        	if(username.getText().equals ("") || password.getPassword().length == 0){
+	        		JOptionPane.showMessageDialog(this, "Please make sure the fields aren't empty!", "Error", JOptionPane.ERROR_MESSAGE);
+	        		//System.exit(0);
+	        	}
+	        	// attempt login
+	        }
+	        else{
+	        	System.exit(0);
+	        }
+	        System.out.println("HI");
+        }while (username.getText().equals("") && password.getPassword().length == 0);
 	
 		ImageIcon logo = new ImageIcon("CardShark.png");
 		JMenuItem cardShark = new JMenuItem(logo);

@@ -40,7 +40,7 @@ public class Dealer extends AbstractPlayer {
 		return playerContainer;
 	}
 
-	public void setPlayers(PlayerContainer players) {
+	public void setPlayerContainer(PlayerContainer players) {
 		this.playerContainer = players;
 	}
 

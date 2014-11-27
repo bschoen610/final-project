@@ -3,7 +3,6 @@ import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -30,9 +29,9 @@ public class RegisterServer extends JFrame {
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		try{
+			@SuppressWarnings("resource")
 			ServerSocket ss = new ServerSocket(60501);
 			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "root");
-		
 		
 			while(true){
 				Socket s = ss.accept();

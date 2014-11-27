@@ -12,6 +12,7 @@ import java.net.Socket;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -66,6 +67,7 @@ public class LoginPanel extends JPanel implements ActionListener {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
+		// Switching to the panels respectively
 		if (e.getActionCommand().equals("submit")) {
 			this.submit();
 		} else if (e.getActionCommand().equals("register")) {
@@ -78,26 +80,36 @@ public class LoginPanel extends JPanel implements ActionListener {
 		String pw = new String(this.password.getPassword());
 		
 		if (this.checkLogin(un, pw)) {
+			// Redirecting to the LobbyPanel
 			Container parent = this.getParent();
 			parent.remove(this);
 			parent.add(new LobbyPanel());
 			parent.validate();
 			parent.repaint();
 		}
+		else {
+			// Added a pop-up when wrong username-password combination is used
+			JOptionPane.showMessageDialog(this, "Username and Password does not match, Please try again", "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	private boolean checkLogin(String uid, String pw) {
 		try {
 			Socket s = new Socket("localhost", 60500);
+			
+			// Sending the username and password to the server
 			PrintWriter pwr = new PrintWriter(s.getOutputStream());
 			pwr.println(uid);
 			pwr.println(pw);
 			pwr.flush();
+			
+			// Once the server checks the database for if valid username-password combination -- returns the result
 			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 			String resultRaw = br.readLine();
 			s.close();
 			return Boolean.parseBoolean(resultRaw);
 		} catch (IOException ioe) {
+			System.err.println("IOException: " + ioe.getMessage());
 			ioe.printStackTrace();
 			System.exit(1);
 		}

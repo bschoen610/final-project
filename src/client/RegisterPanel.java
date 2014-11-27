@@ -36,7 +36,7 @@ public class RegisterPanel extends JPanel implements ActionListener {
 		c.gridy = 0;
 		c.weightx = 0.0;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		this.add(new JLabel("First Name", SwingConstants.RIGHT), c);
+		this.add(new JLabel("First Name  ", SwingConstants.RIGHT), c);
 		c.gridx = 1;
 		c.gridy = 0;
 		c.weightx = 1.0;
@@ -45,7 +45,7 @@ public class RegisterPanel extends JPanel implements ActionListener {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.weightx = 0.0;
-		this.add(new JLabel("Last name", SwingConstants.RIGHT), c);
+		this.add(new JLabel("Last name  ", SwingConstants.RIGHT), c);
 		c.gridx = 1;
 		c.gridy = 1;
 		c.weightx = 1.0;
@@ -54,7 +54,7 @@ public class RegisterPanel extends JPanel implements ActionListener {
 		c.gridx = 0;
 		c.gridy = 2;
 		c.weightx = 0.0;
-		this.add(new JLabel("Username", SwingConstants.RIGHT), c);
+		this.add(new JLabel("Username  ", SwingConstants.RIGHT), c);
 		c.gridx = 1;
 		c.gridy = 2;
 		c.weightx = 1.0;
@@ -63,7 +63,7 @@ public class RegisterPanel extends JPanel implements ActionListener {
 		c.gridx = 0;
 		c.gridy = 3;
 		c.weightx = 0.0;
-		this.add(new JLabel("Password", SwingConstants.RIGHT), c);
+		this.add(new JLabel("Password  ", SwingConstants.RIGHT), c);
 		c.gridx = 1;
 		c.gridy = 3;
 		c.weightx = 1.0;
@@ -72,7 +72,7 @@ public class RegisterPanel extends JPanel implements ActionListener {
 		c.gridx = 0;
 		c.gridy = 4;
 		c.weightx = 0.0;
-		this.add(new JLabel("Verify Password", SwingConstants.RIGHT), c);
+		this.add(new JLabel("Verify Password  ", SwingConstants.RIGHT), c);
 		c.gridx = 1;
 		c.gridy = 4;
 		c.weightx = 1.0;
@@ -81,7 +81,7 @@ public class RegisterPanel extends JPanel implements ActionListener {
 		c.gridx = 0;
 		c.gridy = 5;
 		c.weightx = 0.0;
-		this.add(new JLabel("email", SwingConstants.RIGHT), c);
+		this.add(new JLabel("e-mail  ", SwingConstants.RIGHT), c);
 		c.gridx = 1;
 		c.gridy = 5;
 		c.weightx = 1.0;
@@ -101,9 +101,10 @@ public class RegisterPanel extends JPanel implements ActionListener {
 		String pwA = new String(this.passwordA.getPassword());
 		String pwB = new String(this.passwordB.getPassword());
 		
-		if (! pwA.equals(pwB)) {
-			//Add a popup.
-			System.out.println("Your passwords do not match!!!");
+		if (!pwA.equals(pwB)) {
+			// Add a popup. -- DONE
+			JOptionPane.showMessageDialog(this, "Please make sure that the passwords match", "Error", JOptionPane.ERROR_MESSAGE);
+			System.out.println("Your passwords do not match!!");
 			return;
 		}
 		
@@ -112,8 +113,14 @@ public class RegisterPanel extends JPanel implements ActionListener {
 		String un = this.username.getText();
 		String password = pwA;
 		String email = emailForm.getText();
-		if (addUser(firstName, lastName, un, password, email)){
-			//Show the login screen again.  User has been successfully added.
+		
+		// Making sure that the fields are not empty
+		if(firstName.isEmpty() || lastName.isEmpty() || un.isEmpty() || password.isEmpty() || email.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "None of these fields can be empty!!", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		else if (addUser(firstName, lastName, un, password, email)){
+			//Show the login screen again.  User has been successfully added -- DONE
+			JOptionPane.showMessageDialog(this, "Registration Successful");
 			System.out.println("User added successfully!");
 			Container parent = this.getParent();
 			parent.remove(this);
@@ -122,8 +129,8 @@ public class RegisterPanel extends JPanel implements ActionListener {
 			parent.repaint();
 		}
 		else{
-			//Make some popup that says that the username already exists.
-			JOptionPane.showMessageDialog(this, "Username or email already exists!");
+			//Make some popup that says that the username already exists -- DONE.
+			JOptionPane.showMessageDialog(this, "Username or e-mail already exists!", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		
 	}
@@ -143,11 +150,11 @@ public class RegisterPanel extends JPanel implements ActionListener {
 			s.close();
 			return Boolean.parseBoolean(resultRaw);
 		} catch(IOException ioe){
+			System.out.println("IOException: " + ioe.getMessage());
 			ioe.printStackTrace();
 			System.exit(1);
 		}
 		return false;
 	}
-	
 	
 }

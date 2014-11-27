@@ -33,7 +33,7 @@ public class LoginPanel extends JPanel implements ActionListener {
 		c.gridy = 0;
 		c.weightx = 0.0;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		this.add(new JLabel("Username", SwingConstants.RIGHT), c);
+		this.add(new JLabel("Username   ", SwingConstants.RIGHT), c);
 		c.gridx = 1;
 		c.gridy = 0;
 		c.weightx = 1.0;
@@ -42,7 +42,7 @@ public class LoginPanel extends JPanel implements ActionListener {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.weightx = 0.0;
-		this.add(new JLabel("Password", SwingConstants.RIGHT), c);
+		this.add(new JLabel("Password   ", SwingConstants.RIGHT), c);
 		c.gridx = 1;
 		c.gridy = 1;
 		c.weightx = 1.0;

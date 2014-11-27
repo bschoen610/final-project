@@ -82,7 +82,6 @@ public class Game extends JFrame {
 	        else{
 	        	System.exit(0);
 	        }
-	        System.out.println("HI");
         }while (username.getText().equals("") && password.getPassword().length == 0);
 	
 		ImageIcon logo = new ImageIcon("CardShark.png");

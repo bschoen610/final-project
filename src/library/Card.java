@@ -80,11 +80,13 @@ public class Card extends AbstractBean implements Comparable<Card> {
 	
 	private Rank rank; 
 	private Suit suit;
+	private boolean faceUp;
 	
 	public Card()
 	{
 		this.rank = Rank.ACE;
 		this.suit = Suit.SPADE;
+		this.faceUp = true; 
 	}
 	
 	public Card(Rank rank, Suit suit)
@@ -119,6 +121,14 @@ public class Card extends AbstractBean implements Comparable<Card> {
 	}
 	public Suit getSuit() {
 		return suit;
+	}
+
+	public boolean isFaceUp() {
+		return faceUp;
+	}
+
+	public void setFaceUp(boolean faceUp) {
+		this.faceUp = faceUp;
 	}
 
 }

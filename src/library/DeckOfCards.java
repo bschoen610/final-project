@@ -19,7 +19,7 @@ public class DeckOfCards extends AbstractBean {
 		int numberOfDecks = 5;
 		for(int i = 0; i < numberOfDecks; i++)
 		{
-			for (int k = 0; k < 4; k ++)
+			for (int k = 0; k < 4; k++)
 			{
 				for(int j = 2; j < 15; j++)
 				{
@@ -68,6 +68,15 @@ public class DeckOfCards extends AbstractBean {
 		Card topCard = deckOfCards.elementAt(0);
 		deckOfCards.remove(topCard);
 		return topCard; 
+	}
+	public Card getCard(int index)
+	{
+		return this.getDeckOfCards().get(index);
+	}
+	
+	public int getNumCards()
+	{
+		return this.getDeckOfCards().size(); 
 	}
 	
 	

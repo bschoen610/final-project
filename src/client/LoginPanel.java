@@ -99,6 +99,7 @@ public class LoginPanel extends JPanel implements ActionListener {
 			
 			// Sending the username and password to the server
 			PrintWriter pwr = new PrintWriter(s.getOutputStream());
+			pwr.println("Login");
 			pwr.println(uid);
 			pwr.println(pw);
 			pwr.flush();

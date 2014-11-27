@@ -3,6 +3,8 @@ package library;
 import java.util.Vector;
 
 import library.Card.Rank;
+import library.GamePlay.StateOfRound;
+
 
 public class Hand {
 	private Vector<Card> hand;
@@ -11,18 +13,23 @@ public class Hand {
 	private int realValue; 
 	private boolean isBusted; 
 	private int currentBet; 
-	public Hand()
+	private boolean isBetPlaced;
+	private AbstractPlayer player; 
+
+	public Hand(AbstractPlayer player)
 	{
 		this.hand = new Vector<Card>();
 		this.setBusted(false);
+		isBetPlaced = false; 
+		this.player = player; 
 	}
 	
 	public Vector<Card> getHand() {
 		return hand;
 	}
 	public void addCard(Card c)
-	{
-		hand.add(c);
+	{		hand.add(c);
+		calculateHandValue(); 
 	}
 
 	
@@ -54,6 +61,8 @@ public class Hand {
 		else{
 			this.setBusted(false);
 		}
+		findRealValue(); 
+
 	}
 
 	public int getHighestValue() {
@@ -88,7 +97,7 @@ public class Hand {
 		this.currentBet = currentBet;
 	}
 	
-	public void findRealValue(){
+	private void findRealValue(){
 		int realValue = 0; 
 		if (this.getHighestValue() > 21){
 			realValue = this.getLowestValue();
@@ -101,6 +110,46 @@ public class Hand {
 
 	public int getRealValue() {
 		return realValue;
+	}
+	public Card getCard(int index)
+	{
+		return this.getHand().get(index);
+	}
+	public int getNumCards()
+	{
+		return this.getHand().size(); 
+	}
+	
+	public void bet(int betAmount) throws UnsupportedOperationException
+	{
+		//TODO Bean Fire Property Changes OR State change
+		if(this.getPlayer().getGamePlay().getCurrentState() == StateOfRound.BETTING){
+			if(!isBetPlaced){
+				this.setCurrentBet(betAmount);
+				isBetPlaced = true; 
+			}
+			else{
+				throw new UnsupportedOperationException("Bet was previously placed");			
+			}
+		}else{
+			throw new UnsupportedOperationException("The state of the game is not Betting");			
+		}
+	}
+	
+	public boolean isBetPlaced() {
+		return isBetPlaced;
+	}
+
+	public void setBetPlaced(boolean isBetPlaced) {
+		this.isBetPlaced = isBetPlaced;
+	}
+
+	public AbstractPlayer getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(AbstractPlayer player) {
+		this.player = player;
 	}
 
 

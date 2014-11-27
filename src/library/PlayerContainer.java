@@ -54,4 +54,14 @@ public class PlayerContainer extends AbstractBean {
 	public void setPlayerContainer(Vector<Player> playerContainer) {
 		this.playerContainer = playerContainer;
 	}
+	
+	public Player getPlayer(int playerIndex)
+	{
+		return this.getPlayerContainer().get(playerIndex);
+	}
+	
+	public int getNumPlayers()
+	{
+		return this.getPlayerContainer().size(); 
+	}
 }

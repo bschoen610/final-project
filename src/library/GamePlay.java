@@ -1,7 +1,6 @@
 package library;
 
 public class GamePlay extends AbstractBean {
-	private int amountInPot;
 	private StateOfRound currentState; 
 	private Player currentPlayer; 
 	private PlayerContainer playerContainer; 
@@ -33,9 +32,9 @@ public class GamePlay extends AbstractBean {
 			return stateSymbol;
 		}
 		
-		public StateOfRound next(StateOfRound currentState)
+		public static StateOfRound next(StateOfRound currentState)
 		{
-			return values()[currentState.getStateValue() + 1];
+			return values()[(currentState.getStateValue() + 1)%4];
 		}
 		
 		
@@ -48,14 +47,7 @@ public class GamePlay extends AbstractBean {
 	{
 		newPlayer.setDealer(this.getDealer());
 		this.getPlayerContainer().addPlayer(newPlayer);
-	}
-
-	public int getAmountInPot() {
-		return amountInPot;
-	}
-
-	public void setAmountInPot(int amountInPot) {
-		this.amountInPot = amountInPot;
+		newPlayer.setGamePlay(this);
 	}
 	
 	public StateOfRound getCurrentState() {
@@ -109,7 +101,7 @@ public class GamePlay extends AbstractBean {
 		this.dealer = dealer;
 	}
 	
-	public void nextPlayer(Player nextPlayer)
+	public void nextCurrentPlayer()
 	{
 		//need to make sure the servers have these libraries so everyone is in sync
 		this.setCurrentPlayer(this.getPlayerContainer().nextPlayer(currentPlayer));
@@ -143,8 +135,11 @@ public class GamePlay extends AbstractBean {
 		}
 	}
 
-	private void dealerBustPlayerOutcome() 
+	public void dealerBustPlayerOutcome() 
 	{
+		if(dealer.getDealerHand().isBusted() == false){
+			throw new UnsupportedOperationException(); 
+		}
 		for(int i = 0; i < this.getPlayerContainer().getPlayerContainer().size(); i++)
 		{
 			for(int j = 0; j < this.getPlayerContainer().getPlayerContainer().get(i).getHands().size(); j++)
@@ -162,7 +157,7 @@ public class GamePlay extends AbstractBean {
 		}
 	}
 	
-	private void dealerNoBustPlayerOutcome()
+	public void dealerNoBustPlayerOutcome()
 	{
 		int dealerValue = 0; 
 		if (this.getDealer().getDealerHand().getHighestValue() > 21){
@@ -176,10 +171,13 @@ public class GamePlay extends AbstractBean {
 			for(int j = 0; j < this.getPlayerContainer().getPlayerContainer().get(i).getHands().size(); j++)
 			{
 				Player currentPlayer = this.getPlayerContainer().getPlayerContainer().get(i);
-				int currentPlayerValue = currentPlayer.getHands().get(j).getRealValue();
-				if(currentPlayerValue > dealerValue){
+				int currentHandValue = currentPlayer.getHands().get(j).getRealValue();
+				if(currentHandValue > 21){
+					currentPlayer.setChipCount(currentPlayer.getChipCount() - currentPlayer.getHand(j).getCurrentBet());
+				}
+				else if(currentHandValue > dealerValue){
 					currentPlayer.setChipCount(currentPlayer.getChipCount() + currentPlayer.getHands().get(j).getCurrentBet());						
-				}else if(currentPlayerValue == dealerValue){
+				}else if(currentHandValue == dealerValue){
 					//this means the player has pushed with the dealer
 					//nothing happens
 				}else{
@@ -189,6 +187,62 @@ public class GamePlay extends AbstractBean {
 		}
 		
 	}
+	
+	public void roundIsOver()
+	{
+		//reset things for each player
+		for (int i = 0; i < playerContainer.getPlayerContainer().size(); i++)
+		{
+			Player tempCurrentPlayer = playerContainer.getPlayerContainer().get(i);
+			for(int j = 0; j < tempCurrentPlayer.getHands().size(); i++)
+			{
+				tempCurrentPlayer.getHands().get(j).setCurrentBet(0);
+				
+			}
+			tempCurrentPlayer.getHands().clear(); 
+			tempCurrentPlayer.setCurrentHand(null);
+			
+	
+		}
+		
+		//reset things for the dealer
+		dealer.setCurrentPlayer(null);
+		dealer.setDealerHand(null);
+		dealer.evaluateDeck();
+		
+		
+		//reset things for the gameplay
+		this.setCurrentPlayer(null);
+		
+		
+	}
+	//server will have to tell me how many players there are in the lobby
+	//this basically acts like a constructor to the entire poker game
+	public void brandNewGameStarting(int numPlayers)
+	{
+		// initialize the playerContainer, dealer, and state (and thus, the gameplay) 
+		playerContainer = new PlayerContainer(); 
+		dealer = new Dealer();
+		dealer.setPlayers(playerContainer);
+		currentState = StateOfRound.BETTING;
+		currentPlayer = null; 
+		
+		
+		//set things up for each player
+		for(int i = 0; i < numPlayers; i++)
+		{
+			Player player = new Player(); 
+			this.addPlayer(player);			
+		}		
+		
+	}
+	
+	public Player getPlayer(int index)
+	{
+		return this.getPlayerContainer().getPlayerContainer().get(index);
+	}
+	
+
 	
 		
 }

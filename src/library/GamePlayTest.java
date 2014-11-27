@@ -82,7 +82,38 @@ public class GamePlayTest {
 
 	@Test
 	public void testDetermineWinnersAndLosers() {
-		fail("Not yet implemented"); // TODO
+		gamePlay.addPlayer(player1);
+		gamePlay.addPlayer(player2);
+		Card card1 = new Card(Rank.KING, Suit.CLUB);
+		Card card2 = new Card(Rank.KING, Suit.DIAMOND);
+		Card card3 = new Card(Rank.THREE, Suit.HEART);
+		Card card4 = new Card(Rank.NINE, Suit.DIAMOND);
+		gamePlay.setCurrentPlayer(player1);
+		player1.getHand(0).addCard(card1);
+		player1.getHand(0).addCard(card2);
+		player1.splitHand();
+		player1.getHand(0).addCard(card3);
+		player1.getHand(0).addCard(card4);
+		player1.getHand(1).addCard(card2);
+		dealer.getDealerHand().addCard(card1);
+		dealer.getDealerHand().addCard(card4);
+		gamePlay.setCurrentPlayer(player2);
+		player2.getHand(0).addCard(card1);
+		player2.getHand(0).addCard(card4);
+		
+		player2.setChipCount(100);
+		player2.setCurrentHand(player2.getHand(0));
+		player2.getCurrentHand().bet(50);
+		player1.setChipCount(100);
+		player1.setCurrentHand(player1.getHand(0));
+		player1.getCurrentHand().bet(50);
+		player1.setCurrentHand(player1.getHand(1)); 
+		player1.getCurrentHand().bet(50);
+		
+		gamePlay.determineWinnersAndLosers();
+		assertEquals("Player 1 should have 100 dollars ", 100, player1.getChipCount());
+		assertEquals("Player 2 should have 100 dollars, he should push", 100, player2.getChipCount());
+		
 	}
 	
 	@Test
@@ -135,12 +166,54 @@ public class GamePlayTest {
 
 	@Test
 	public void testRoundIsOver() {
-		fail("Not yet implemented"); // TODO
+		gamePlay.addPlayer(player1);
+		gamePlay.addPlayer(player2);
+		Card card1 = new Card(Rank.KING, Suit.CLUB);
+		Card card2 = new Card(Rank.KING, Suit.DIAMOND);
+		Card card3 = new Card(Rank.THREE, Suit.HEART);
+		Card card4 = new Card(Rank.NINE, Suit.DIAMOND);
+		gamePlay.setCurrentPlayer(player1);
+		player1.getHand(0).addCard(card1);
+		player1.getHand(0).addCard(card2);
+		player1.splitHand();
+		player1.getHand(0).addCard(card3);
+		player1.getHand(0).addCard(card4);
+		player1.getHand(1).addCard(card2);
+		dealer.getDealerHand().addCard(card1);
+		dealer.getDealerHand().addCard(card4);
+		gamePlay.setCurrentPlayer(player2);
+		player2.getHand(0).addCard(card1);
+		player2.getHand(0).addCard(card4);
+		
+		player2.setChipCount(100);
+		player2.setCurrentHand(player2.getHand(0));
+		player2.getCurrentHand().bet(50);
+		player1.setChipCount(100);
+		player1.setCurrentHand(player1.getHand(0));
+		player1.getCurrentHand().bet(50);
+		player1.setCurrentHand(player1.getHand(1)); 
+		player1.getCurrentHand().bet(50);
+		
+		gamePlay.determineWinnersAndLosers();
+		assertEquals("Player 1 should have 100 dollars ", 100, player1.getChipCount());
+		assertEquals("Player 2 should have 100 dollars, he should push", 100, player2.getChipCount());
+		
+		gamePlay.roundIsOver();
+		
+		assertEquals("Player1 should have no hands", 0, player1.getNumHands());
+		assertEquals("Dealer should not have a hand", null, dealer.getDealerHand());
+		assertEquals("There should be no current Player", null,gamePlay.getCurrentPlayer());
+		
 	}
 
 	@Test
 	public void testBrandNewGameStarting() {
-		fail("Not yet implemented"); // TODO
+		gamePlay.brandNewGameStarting(2); 
+		
+		assertNotNull("Dealer player container is wrongly null", gamePlay.getDealer().getPlayers());
+		assertNotNull("Gameplay player container is wrongly null", gamePlay.getPlayerContainer() );
+		assertEquals("Dealer and GamePlay should have the same Player Container", true, gamePlay.getDealer().getPlayers() == gamePlay.getPlayerContainer() );
+		assertEquals("Player Containers should have 2 player", 2, gamePlay.getPlayerContainer().getNumPlayers());
 	}
 
 }

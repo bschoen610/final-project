@@ -11,10 +11,15 @@ import org.junit.Test;
 public class PlayerTest {
 
 	private Player player1; 
+	private Player player2;
+	private GamePlay gamePlay;
 	@Before
 	public void setUp() throws Exception {
 		
-		 player1 = new Player(); 
+		 gamePlay = new GamePlay(); 
+		 gamePlay.brandNewGameStarting(2);
+		 player1 = gamePlay.getPlayer(0);
+		 player2 = gamePlay.getPlayer(1); 
 	
 	}
 
@@ -28,6 +33,8 @@ public class PlayerTest {
 		player1.getCurrentHand().addCard(card2);
 		
 		player1.determineCanSplit();
+		//I never want to call setCurrent from a player. Make sure i always do it from gamePlay
+		//leaving this line so i remember what to look for after done with unit testing
 		player1.setCurrent(true);
 		
 		player1.splitHand(); 
@@ -39,8 +46,13 @@ public class PlayerTest {
 		player1.getHands().remove(0);
 		player1.getHand(0).addCard(card3);
 		player1.determineCanSplit();
-		player1.splitHand();
-		
+		boolean caughtException = false; 
+		try {
+			player1.splitHand();
+		} catch (UnsupportedOperationException e) {
+			caughtException = true; 
+		}
+		assertEquals("Caught exception should be true, split hand should not be possible", true, caughtException);
 		assertEquals("Player one should only have 1 hand", 1, player1.getNumHands());
 	}
 
@@ -66,7 +78,8 @@ public class PlayerTest {
 	@Test
 	public void testDoubleDown() {
 		
-	//	player1.bet(500);
+		player1.getCurrentHand().bet(500);
+		//Same thing as above, this should never be called. It should ONLY be called in gamePlay.setCurrentPlayer
 		player1.setCurrent(true);
 		player1.doubleDown();
 		

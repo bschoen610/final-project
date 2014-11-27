@@ -69,7 +69,7 @@ public class DealerTest {
 		PlayerContainer playerContainer = new PlayerContainer(); 
 		playerContainer.addPlayer(player1);
 		playerContainer.addPlayer(player2);
-		dealer.setPlayers(playerContainer);
+		dealer.setPlayerContainer(playerContainer);
 		
 		dealer.dealToTable();
 		

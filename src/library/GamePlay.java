@@ -43,6 +43,7 @@ public class GamePlay extends AbstractBean {
 	//add methods for creating players when players join the game
 	//This will need to give the players the same dealer.
 	
+
 	public void addPlayer(Player newPlayer)
 	{
 		newPlayer.setDealer(this.getDealer());
@@ -69,13 +70,16 @@ public class GamePlay extends AbstractBean {
 		return currentPlayer;
 	}
 
+	//TODO make sure this is the only method that switches the currentPlayer
 	public void setCurrentPlayer(Player currentPlayer) {
 		Player oldPlayer = this.currentPlayer;
 		this.currentPlayer = currentPlayer;
 		this.dealer.setCurrentPlayer(currentPlayer);
 		this.playerContainer.setCurrentPlayer(currentPlayer);
 		this.getPcs().firePropertyChange("currentPlayer", oldPlayer, this.getCurrentPlayer());
-		currentPlayer.setCurrent(true);
+		if(currentPlayer != null){
+			currentPlayer.setCurrent(true);
+		}
 		for (int i = 0; i < playerContainer.getPlayerContainer().size(); i++)
 		{
 			if (playerContainer.getPlayerContainer().get(i) != currentPlayer)
@@ -91,6 +95,7 @@ public class GamePlay extends AbstractBean {
 
 	public void setPlayerContainer(PlayerContainer playerContainer) {
 		this.playerContainer = playerContainer;
+		this.getDealer().setPlayerContainer(playerContainer);
 	}
 
 	public Dealer getDealer() {
@@ -194,7 +199,7 @@ public class GamePlay extends AbstractBean {
 		for (int i = 0; i < playerContainer.getPlayerContainer().size(); i++)
 		{
 			Player tempCurrentPlayer = playerContainer.getPlayerContainer().get(i);
-			for(int j = 0; j < tempCurrentPlayer.getHands().size(); i++)
+			for(int j = 0; j < tempCurrentPlayer.getHands().size(); j++)
 			{
 				tempCurrentPlayer.getHands().get(j).setCurrentBet(0);
 				
@@ -223,9 +228,11 @@ public class GamePlay extends AbstractBean {
 		// initialize the playerContainer, dealer, and state (and thus, the gameplay) 
 		playerContainer = new PlayerContainer(); 
 		dealer = new Dealer();
-		dealer.setPlayers(playerContainer);
+		this.setDealer(dealer);
+		this.setPlayerContainer(playerContainer);
 		currentState = StateOfRound.BETTING;
-		currentPlayer = null; 
+		currentPlayer = null;
+		
 		
 		
 		//set things up for each player
@@ -240,6 +247,21 @@ public class GamePlay extends AbstractBean {
 	public Player getPlayer(int index)
 	{
 		return this.getPlayerContainer().getPlayerContainer().get(index);
+	}
+	
+	public void beginRound()
+	{
+		this.setCurrentPlayer(playerContainer.getPlayer(0));
+		this.setCurrentState(StateOfRound.BETTING);
+		//players make bets
+		
+		//players are dealt cards
+		
+		//dealer is dealt cards
+		
+		//check for dealer blackjack
+		
+		//if dealer doesn't have blackjack then continue to playerActions
 	}
 	
 

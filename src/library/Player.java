@@ -104,7 +104,7 @@ public class Player extends AbstractPlayer {
 	}
 	public void doubleDown()
 	{
-		if(isCurrentPlayer()){
+		if(isCurrent()){
 			this.currentHand.setCurrentBet(this.currentHand.getCurrentBet() * 2);
 			//TODO Bean Fire Property Changes OR State change
 
@@ -116,7 +116,7 @@ public class Player extends AbstractPlayer {
 	public void stay()
 	{
 		//TODO Bean Fire Property Changes OR State change
-		if(isCurrentPlayer()){
+		if(isCurrent()){
 
 		}else{
 
@@ -127,7 +127,7 @@ public class Player extends AbstractPlayer {
 		// signal the dealer to deal one card to the players current hand
 		//signal to the server to signal to the gamePlay to hit for the currentPlayer
 		// this.getGamePlay().hit(); 
-		if (isCurrentPlayer()){
+		if (isCurrent()){
 			dealer.dealToPlayer();
 			//TODO Bean Fire Property Changes OR State change
 		}else{
@@ -159,14 +159,6 @@ public class Player extends AbstractPlayer {
 		this.userName = userName;
 	}
 	
-	public boolean isCurrentPlayer()
-	{
-		if (this.getGamePlay().getCurrentPlayer() == this){
-			return true;
-		}else{
-			return false; 
-		}
-	}
 
 	
 	

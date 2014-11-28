@@ -1,6 +1,10 @@
 package library;
 
-public class Dealer extends AbstractPlayer {
+public class Dealer extends AbstractPlayer implements java.io.Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5227374921561663498L;
 	private DeckOfCards deck;
 	private PlayerContainer playerContainer; 
 	private Player currentPlayer; 
@@ -20,7 +24,9 @@ public class Dealer extends AbstractPlayer {
 	}
 
 	public void setDeck(DeckOfCards deck) {
+		DeckOfCards oldDeck = this.getDeck(); 
 		this.deck = deck;
+		this.getPcs().firePropertyChange("deck", oldDeck, this.getDeck());
 	}
 	
 	public void dealToPlayer()
@@ -41,7 +47,9 @@ public class Dealer extends AbstractPlayer {
 	}
 
 	public void setPlayerContainer(PlayerContainer players) {
+		PlayerContainer oldPlayerContainer = this.getPlayers();
 		this.playerContainer = players;
+		this.getPcs().firePropertyChange("playerContainer", oldPlayerContainer, this.getPlayers());
 	}
 
 	public Player getCurrentPlayer() {
@@ -49,7 +57,11 @@ public class Dealer extends AbstractPlayer {
 	}
 
 	public void setCurrentPlayer(Player currentPlayer) {
+		//I setCurrentPlayer for everyone in the GamePlay class. Would i need to do the PCS stuff in every method that GamePlay.setCurrentPlayer calls and then not have to deal with it in the GamePlay method? 
+		//Or otherway around, or do it for both. 
+		Player oldCurrentPlayer = this.getCurrentPlayer();
 		this.currentPlayer = currentPlayer;
+		this.getPcs().firePropertyChange("currentPlayer", oldCurrentPlayer, this.getCurrentPlayer());
 	}
 
 	public Hand getDealerHand() {
@@ -57,7 +69,9 @@ public class Dealer extends AbstractPlayer {
 	}
 
 	public void setDealerHand(Hand dealerHand) {
+		Hand oldHand = this.getDealerHand();
 		this.dealerHand = dealerHand;
+		this.getPcs().firePropertyChange("dealerHand", oldHand, this.getDealerHand());
 	}
 	
 	
@@ -76,13 +90,13 @@ public class Dealer extends AbstractPlayer {
 	{
 		for (int i = 0; i < playerContainer.getPlayerContainer().size(); i++)
 		{
-			currentPlayer = playerContainer.getPlayer(i);
+			this.setCurrentPlayer(playerContainer.getPlayer(i));
 			dealToPlayer(); 
 			dealToPlayer();
 		}
 		
 		//reset current player to first player left of dealer
-		currentPlayer = playerContainer.getPlayer(0);
+		this.setCurrentPlayer(playerContainer.getPlayer(0));
 	}
 	
 	public void dealToDealer()

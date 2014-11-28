@@ -2,7 +2,11 @@ package library;
 
 import java.util.Vector;
 
-public class Player extends AbstractPlayer { 
+public class Player extends AbstractPlayer implements java.io.Serializable  { 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7072489023475046711L;
 	private Vector<Hand> hands;
 	private int chipCount; 
 	private boolean canSplit; 
@@ -43,7 +47,9 @@ public class Player extends AbstractPlayer {
 	}
 
 	public void setChipCount(int chipCount) {
+		int oldChipCount = this.getChipCount();
 		this.chipCount = chipCount;
+		this.getPcs().firePropertyChange("chipCount",oldChipCount, this.getChipCount() );
 	}
 	
 	public Hand getCurrentHand()
@@ -54,7 +60,9 @@ public class Player extends AbstractPlayer {
 	//this needs to be called whenever you switch hands during a split
 	public void setCurrentHand(Hand currentHand)
 	{
+		Hand oldHand = this.getCurrentHand();
 		this.currentHand = currentHand;
+		this.getPcs().firePropertyChange("currentHand", oldHand, this.getCurrentHand());
 	}
 
 	public void splitHand()
@@ -69,7 +77,7 @@ public class Player extends AbstractPlayer {
 			splitHand.addCard(splitCard);
 			this.getHands().add(splitHand);
 			
-			//TODO Bean Fire Property Changes OR State change
+			this.getPcs().firePropertyChange("numHands", this.getNumHands() - 1, this.getNumHands());
 
 		}else{
 			throw new UnsupportedOperationException("You cannot split hands right now"); 
@@ -83,7 +91,9 @@ public class Player extends AbstractPlayer {
 	}
 
 	public void setCanSplit(boolean canSplit) {
+		boolean oldCanSplit = this.canSplit;
 		this.canSplit = canSplit;
+		this.getPcs().firePropertyChange("canSplit", oldCanSplit, this.canSplit);
 	}
 	
 	public void determineCanSplit()
@@ -106,8 +116,8 @@ public class Player extends AbstractPlayer {
 	{
 		if(isCurrent()){
 			this.currentHand.setCurrentBet(this.currentHand.getCurrentBet() * 2);
-			//TODO Bean Fire Property Changes OR State change
-
+			//TODO Need to deal one more card to player and move to next hand, if this was his last hand move to last player
+			//After Bean
 		}else{
 
 		}
@@ -116,6 +126,9 @@ public class Player extends AbstractPlayer {
 	public void stay()
 	{
 		//TODO Bean Fire Property Changes OR State change
+		//this is a state change right??
+		//Really the crux of the issue left. How to know when to advance players, depends on numHands of currentPlayer(this)
+		//Same with hit and double down and split - lots of things have the happen
 		if(isCurrent()){
 
 		}else{
@@ -140,7 +153,9 @@ public class Player extends AbstractPlayer {
 	}
 
 	public void setDealer(Dealer dealer) {
+		Dealer oldDealer = this.getDealer(); 
 		this.dealer = dealer;
+		this.getPcs().firePropertyChange("dealer", oldDealer, this.getDealer());
 	}
 
 	public boolean isCurrent() {
@@ -148,7 +163,9 @@ public class Player extends AbstractPlayer {
 	}
 
 	public void setCurrent(boolean isCurrent) {
+		boolean oldCurrent = this.isCurrent;
 		this.isCurrent = isCurrent;
+		this.getPcs().firePropertyChange("isCurrent", oldCurrent, this.isCurrent());
 	}
 
 	public String getUserName() {

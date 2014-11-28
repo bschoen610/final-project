@@ -1,9 +1,14 @@
 package library;
 
-public class Card extends AbstractBean implements Comparable<Card> {
+public class Card extends AbstractBean implements Comparable<Card>,java.io.Serializable {
 
 	//http://sourceforge.net/p/jokera/code/ci/master/tree/src/mikejyg/playingCards/Card.java#l57
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3235968207830808445L;
+
 	public enum Suit{
 		CLUB(0, 'C'), 
 		DIAMOND(1, 'D'), 

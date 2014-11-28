@@ -6,7 +6,11 @@ import java.util.Vector;
 import library.Card.Rank;
 import library.Card.Suit;
 
-public class DeckOfCards extends AbstractBean {
+public class DeckOfCards extends AbstractBean implements java.io.Serializable  {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6902749635422700599L;
 	private Vector<Card> deckOfCards;
 	private Random random; 
 	
@@ -65,8 +69,11 @@ public class DeckOfCards extends AbstractBean {
 	//can be used for the dealer to deal cards and trash cards
 	public Card removeTopCard()
 	{
+		int oldNumCards = this.getNumCards();
 		Card topCard = deckOfCards.elementAt(0);
 		deckOfCards.remove(topCard);
+		this.getPcs().firePropertyChange("numCards", oldNumCards, this.getNumCards());
+		
 		return topCard; 
 	}
 	public Card getCard(int index)
@@ -78,9 +85,5 @@ public class DeckOfCards extends AbstractBean {
 	{
 		return this.getDeckOfCards().size(); 
 	}
-	
-	
-	//TODO write logic for when deck has to be reconstructed
-	//how many cards left should there be when this happens? Maybe add a cardsLeft int variable 
 
 }

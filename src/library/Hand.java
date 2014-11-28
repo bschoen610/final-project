@@ -6,13 +6,17 @@ import library.Card.Rank;
 import library.GamePlay.StateOfRound;
 
 
-public class Hand {
+public class Hand extends AbstractBean implements java.io.Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1710360574880167790L;
 	private Vector<Card> hand;
-	private int highestValue;
-	private int lowestValue; 
-	private int realValue; 
+	private int highestValue = 0;
+	private int lowestValue = 0; 
+	private int realValue = 0; 
 	private boolean isBusted; 
-	private int currentBet; 
+	private int currentBet = 0; 
 	private boolean isBetPlaced;
 	private AbstractPlayer player; 
 
@@ -28,8 +32,13 @@ public class Hand {
 		return hand;
 	}
 	public void addCard(Card c)
-	{		hand.add(c);
+	{		
+		int oldNumCards =  this.getNumCards();
+		hand.add(c);
 		calculateHandValue(); 
+		this.getPcs().firePropertyChange("numCards", oldNumCards, this.getNumCards());
+		//changing a list so call fireIntervalAdded
+		this.getListDataChangeSupport().fireIntervalAdded(this.getNumCards() - 1);
 	}
 
 	
@@ -51,10 +60,9 @@ public class Hand {
 			}
 			
 		}
-		
 		this.setHighestValue(highValue);
 		this.setLowestValue(lowValue);
-		
+				
 		if (this.getLowestValue() > 21){
 			this.setBusted(true);
 		}
@@ -62,7 +70,6 @@ public class Hand {
 			this.setBusted(false);
 		}
 		findRealValue(); 
-
 	}
 
 	public int getHighestValue() {
@@ -70,7 +77,9 @@ public class Hand {
 	}
 
 	public void setHighestValue(int highestValue) {
+		int oldHighestValue = this.getHighestValue();
 		this.highestValue = highestValue;
+		this.getPcs().firePropertyChange("highestValue", oldHighestValue, this.getHighestValue());
 	}
 
 	public int getLowestValue() {
@@ -78,7 +87,9 @@ public class Hand {
 	}
 
 	public void setLowestValue(int lowestValue) {
+		int oldLowestValue = this.getLowestValue();
 		this.lowestValue = lowestValue;
+		this.getPcs().firePropertyChange("lowestValue", oldLowestValue, this.getLowestValue());
 	}
 
 	public boolean isBusted() {
@@ -86,7 +97,9 @@ public class Hand {
 	}
 
 	public void setBusted(boolean isBusted) {
+		boolean oldBusted = this.isBusted;
 		this.isBusted = isBusted;
+		this.getPcs().firePropertyChange("isBusted", oldBusted, this.isBusted());
 	}
 
 	public int getCurrentBet() {
@@ -94,10 +107,13 @@ public class Hand {
 	}
 
 	public void setCurrentBet(int currentBet) {
+		int oldBet = this.getCurrentBet();
 		this.currentBet = currentBet;
+		this.getPcs().firePropertyChange("currentBet", oldBet, this.getCurrentBet());
 	}
 	
 	private void findRealValue(){
+		int oldRealValue = this.getRealValue();
 		int realValue = 0; 
 		if (this.getHighestValue() > 21){
 			realValue = this.getLowestValue();
@@ -106,6 +122,8 @@ public class Hand {
 			realValue = this.getHighestValue();
 		}
 		this.realValue = realValue;
+		this.getPcs().firePropertyChange("realValue", oldRealValue, this.getRealValue());
+
 	}
 
 	public int getRealValue() {
@@ -122,11 +140,12 @@ public class Hand {
 	
 	public void bet(int betAmount) throws UnsupportedOperationException
 	{
-		//TODO Bean Fire Property Changes OR State change
 		if(this.getPlayer().getGamePlay().getCurrentState() == StateOfRound.BETTING){
 			if(!isBetPlaced){
 				this.setCurrentBet(betAmount);
 				isBetPlaced = true; 
+				this.getPcs().firePropertyChange("currentBet", 0, betAmount);
+
 			}
 			else{
 				throw new UnsupportedOperationException("Bet was previously placed");			
@@ -141,7 +160,9 @@ public class Hand {
 	}
 
 	public void setBetPlaced(boolean isBetPlaced) {
+		boolean oldIsBetPlaced = this.isBetPlaced();
 		this.isBetPlaced = isBetPlaced;
+		this.getPcs().firePropertyChange("isBetPlaced", oldIsBetPlaced, this.isBetPlaced());
 	}
 
 	public AbstractPlayer getPlayer() {

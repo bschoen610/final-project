@@ -1,6 +1,13 @@
 package library;
 
 import static org.junit.Assert.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import library.Card.Rank;
 import library.Card.Suit;
 import library.GamePlay.StateOfRound;
@@ -214,6 +221,36 @@ public class GamePlayTest {
 		assertNotNull("Gameplay player container is wrongly null", gamePlay.getPlayerContainer() );
 		assertEquals("Dealer and GamePlay should have the same Player Container", true, gamePlay.getDealer().getPlayers() == gamePlay.getPlayerContainer() );
 		assertEquals("Player Containers should have 2 player", 2, gamePlay.getPlayerContainer().getNumPlayers());
+	}
+	
+	@Test
+	public void testSerializedGamePlay(){
+		gamePlay.brandNewGameStarting(2);
+		gamePlay.getPlayer(0).setChipCount(1000);
+		gamePlay.setCurrentPlayer(gamePlay.getPlayer(0));
+		gamePlay.getDealer().dealToPlayer();
+		ByteArrayOutputStream byteStream = new ByteArrayOutputStream(); 
+		try {
+			ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
+			objectStream.writeObject(gamePlay);
+			objectStream.close();
+			byte[] byteArray = byteStream.toByteArray();
+			byteStream.close(); 
+			ByteArrayInputStream byteInputStream = new ByteArrayInputStream(byteArray);
+			ObjectInputStream objectInputStream = new ObjectInputStream(byteInputStream);
+			try {
+				GamePlay gamePlay2 = (GamePlay)objectInputStream.readObject();
+				assertEquals("The gameplays should have the same numPlayers", gamePlay.getPlayerContainer().getNumPlayers(), gamePlay2.getPlayerContainer().getNumPlayers());
+				assertEquals("The gamePlays player 1's should have the same card", gamePlay.getPlayer(0).getHand(0).getCard(0), gamePlay2.getPlayer(0).getHand(0).getCard(0));
+				assertEquals("The gamePlays player 1's should have the same chip count", gamePlay.getPlayer(0).getChipCount(), gamePlay2.getPlayer(0).getChipCount());
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

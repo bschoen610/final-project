@@ -9,6 +9,8 @@ public class GameTest {
 
 	public static void main(String[] args) {
 		
+		//This tested my randomnesss of deck
+		
 		GamePlay gamePlay = new GamePlay(); 
 		gamePlay.brandNewGameStarting(2);
 		Dealer dealer = gamePlay.getDealer(); 
@@ -45,16 +47,15 @@ public class GameTest {
 		deckOfCards = dealer.getDeck(); 
 		
 		try {
-			//player1.bet(100);
+			player1.getCurrentHand().bet(100);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			System.out.println(e.getMessage());
+ 			System.out.println(e.getMessage());
 		}
 		
-		//gamePlay.setCurrentState(StateOfRound.next(gamePlay.getCurrentState()));
+		gamePlay.setCurrentState(StateOfRound.next(gamePlay.getCurrentState()));
 		
 		try{
-		//player2.bet(100);
+		player2.getCurrentHand().bet(100);
 		}catch(Exception ex){
 			System.out.println(ex.getMessage());
 		}

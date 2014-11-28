@@ -2,12 +2,16 @@ package library;
 
 import java.util.Vector;
 
-public class PlayerContainer extends AbstractBean {
+public class PlayerContainer extends AbstractBean implements java.io.Serializable {
 	 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 661069278365290816L;
+
 	private Player currentPlayer;
 	
-	private Vector<Player> playerContainer; 
-	
+	private Vector<Player> playerContainer; 	
 
 	public PlayerContainer()
 	{
@@ -19,11 +23,15 @@ public class PlayerContainer extends AbstractBean {
 	public void addPlayer(Player player)
 	{
 		playerContainer.add(player);
+		//numPlayers - 1 is the greatest index of the list
+		this.getListDataChangeSupport().fireIntervalAdded(this.getNumPlayers() - 1);
 	}
+	//May need a function that adds all players at once
 	
 	public void removePlayer(Player player)
 	{
 		playerContainer.remove(player);
+		this.getListDataChangeSupport().fireIntervalRemoved(this.getNumPlayers() - 1);
 	}
 	
 	//may need an insertPlayer at index function

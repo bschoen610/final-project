@@ -1,6 +1,10 @@
 package library;
 
-public class GamePlay extends AbstractBean {
+public class GamePlay extends AbstractBean implements java.io.Serializable  {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7006462820149743976L;
 	private StateOfRound currentState; 
 	private Player currentPlayer; 
 	private PlayerContainer playerContainer; 
@@ -46,6 +50,7 @@ public class GamePlay extends AbstractBean {
 
 	public void addPlayer(Player newPlayer)
 	{
+		//TODOSame question as setCurrentPlayer - If I have PCS fire happening in newPlayer.setDealer, and PlayerContainer.addPlayer, and Player.setGamePlay, do i need it here? 
 		newPlayer.setDealer(this.getDealer());
 		this.getPlayerContainer().addPlayer(newPlayer);
 		newPlayer.setGamePlay(this);
@@ -56,13 +61,15 @@ public class GamePlay extends AbstractBean {
 	}
 
 	public void setCurrentState(StateOfRound currentState) {
+		StateOfRound oldState = this.getCurrentState();
 		this.currentState = currentState;
+		this.getPcs().firePropertyChange("currentState", oldState, this.getCurrentState());
 	}
 	
 	public void nextState(){
 		//Tricking java is fun
 		StateOfRound oldState = this.currentState;
-		this.currentState = this.currentState.next(currentState);
+		this.currentState = StateOfRound.next(currentState);
 		this.getPcs().firePropertyChange("currentState", oldState, this.getCurrentState());
 	}
 
@@ -71,11 +78,13 @@ public class GamePlay extends AbstractBean {
 	}
 
 	//TODO make sure this is the only method that switches the currentPlayer
+	//After Bean
 	public void setCurrentPlayer(Player currentPlayer) {
 		Player oldPlayer = this.currentPlayer;
 		this.currentPlayer = currentPlayer;
 		this.dealer.setCurrentPlayer(currentPlayer);
 		this.playerContainer.setCurrentPlayer(currentPlayer);
+		//this may cause the UI to do extra work
 		this.getPcs().firePropertyChange("currentPlayer", oldPlayer, this.getCurrentPlayer());
 		if(currentPlayer != null){
 			currentPlayer.setCurrent(true);
@@ -94,8 +103,10 @@ public class GamePlay extends AbstractBean {
 	} 
 
 	public void setPlayerContainer(PlayerContainer playerContainer) {
+		PlayerContainer oldPlayerContainer = this.getPlayerContainer();
 		this.playerContainer = playerContainer;
 		this.getDealer().setPlayerContainer(playerContainer);
+		this.getPcs().firePropertyChange("playerContainer", oldPlayerContainer, this.getPlayerContainer());
 	}
 
 	public Dealer getDealer() {
@@ -103,16 +114,20 @@ public class GamePlay extends AbstractBean {
 	}
 
 	public void setDealer(Dealer dealer) {
+		Dealer oldDealer = this.getDealer();
 		this.dealer = dealer;
+		this.getPcs().firePropertyChange("dealer", oldDealer, this.getDealer());
 	}
 	
 	public void nextCurrentPlayer()
 	{
 		//need to make sure the servers have these libraries so everyone is in sync
+		
 		this.setCurrentPlayer(this.getPlayerContainer().nextPlayer(currentPlayer));
 		
 		//TODO this needs to be called whenever a player busts or a player stays
 		//TODO this needs to tell the server to tell the next player its his turn
+		//After Bean
 	}
 	
 	
@@ -129,6 +144,7 @@ public class GamePlay extends AbstractBean {
 		//if dealer busts then everyone who has not busted wins
 		
 		//this may not be necessary
+		//TODO this may be a repeat Todo, but, make sure that i am recalculating the dealer's hand whenever he gets a card to make sure i am not screwing up 
 		dealer.getDealerHand().calculateHandValue();
 		
 		if (dealer.getDealerHand().isBusted() == true){

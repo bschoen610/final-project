@@ -83,7 +83,7 @@ public class LoginPanel extends JPanel implements ActionListener {
 			// Redirecting to the LobbyPanel
 			Container parent = this.getParent();
 			parent.remove(this);
-			parent.add(new LobbyPanel());
+			parent.add(new LobbyPanel(un));
 			parent.validate();
 			parent.repaint();
 		}

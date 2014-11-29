@@ -7,11 +7,32 @@ import java.awt.Graphics2D;
 import java.awt.LayoutManager;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
+	private Socket s;
+	
+	public GamePanel(LayoutManager layout) {
+		super(layout);
+		
+		try {
+			this.s = new Socket("localhost", 60502);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		// tell network to find a game
+		// show a message about game-finding status
+		// wait for game
+		// start game-listening function
+	}
 
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
@@ -40,11 +61,4 @@ public class GamePanel extends JPanel {
 	public Dimension getPreferredSize() {
         return new Dimension(600, 600);
     }
-
-	public GamePanel() {
-	}
-	
-	public GamePanel(LayoutManager layout){
-		super(layout);
-	}
 }

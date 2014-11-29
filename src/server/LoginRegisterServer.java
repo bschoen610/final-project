@@ -32,7 +32,7 @@ public class LoginRegisterServer extends JFrame{
 		try{
 			@SuppressWarnings("resource")
 			ServerSocket ss = new ServerSocket(60500);
-			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "passwordHere");
+			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "3Rdplacespel");
 		
 			while (true) {
 				Socket s = ss.accept();
@@ -46,6 +46,7 @@ public class LoginRegisterServer extends JFrame{
 					pwr.println(auth);
 					pwr.flush();
 				}
+
 				else if(type.equals("Register")) {
 					String firstName = br.readLine();
 					String lastName = br.readLine();
@@ -78,7 +79,12 @@ public class LoginRegisterServer extends JFrame{
 			rs.beforeFirst();
 			rs.next();
 			//Return true if password is correct
-			if (pass.equals(rs.getString("password"))) return true;
+			if (pass.equals(rs.getString("password"))){
+				query = c.prepareStatement("UPDATE user SET ready_to_play=true WHERE username = ?");
+				query.setString(1, un);
+				query.execute();
+				return true;
+			}
 			//Wrong password.
 			else return false;
 		} catch (SQLException sqle) {

@@ -1,17 +1,24 @@
 package game;
 
-import java.util.Collections;
-import java.util.Random;
-import java.util.Scanner;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.HashMap;
 import java.util.Vector;
 
-public class Game {
+public class Game implements Runnable {
 	public static final int NUM_SUITS = 4;
 	public static final int NUM_FACES = 13;
 	public static final int NUM_DECKS = 6;
 	public static final int NUM_CARDS = NUM_SUITS * NUM_FACES;
 	public static final int DECK_SIZE = NUM_DECKS * NUM_CARDS;
 	public static final int SHUFFLE_COUNT = 1024;
+	public static final int MAX_PLAYERS = 6;
+	public static final int MILLIS_PER_SEC = 1000;
+	public static final int JOIN_TIME_SEC = 10;
+	public static final int JOIN_TIME = JOIN_TIME_SEC * MILLIS_PER_SEC;
 	
 	public enum Move {
 		HIT,
@@ -20,15 +27,55 @@ public class Game {
 		SPLIT,
 	}
 	
+	HashMap<String, Socket> userSocketMap;
 	Vector<Player> players = new Vector<Player>();
 	Player dealer = new Player(-1);
 	Deck deck;
+	ServerSocket ss;
 	
-	public Game() {		
-		for (int i = 0; i < 2; ++i) {
-			this.players.add(new Player(i));
+	public Game(HashMap<String, Socket> userSocketMap) {
+		this.userSocketMap = userSocketMap;
+	}
+		
+	private void processMove(Player p) {
+		for (int i = 0; i < p.hands.size(); ++i) {
+			boolean donePlaying = false;
+			
+			while (! donePlaying) {
+				switch (p.getMove()) {
+				case HIT:
+					p.addCard(this.deck.getCard(), i);
+					donePlaying = p.getSum(i) >= 21;
+					break;
+				case STAY:
+					donePlaying = true;
+					break;
+				case DOUBLE:
+					donePlaying = true;
+					p.addCard(this.deck.getCard(), i);
+					p.setBet(p.getBet() * 2);
+					p.doubled = true;
+					break;
+				case SPLIT:
+					p.split();
+					donePlaying = p.getSum(i) > 21;
+					break;
+				default:
+					break;
+				}
+				
+				System.out.println(p.getSum(i));
+			}
 		}
+	}
+	
+	private void dealerMove() {
+		while (this.dealer.getSum(0) < 17) {
+			this.dealer.addCard(this.deck.getCard(), 0);
+		}
+	}
 
+	public void run() {
 		for (Player p : this.players) {
 			p.readBet();
 		}
@@ -94,47 +141,5 @@ public class Game {
 				System.out.println("bankrupt");
 			}
 		}
-	}
-		
-	private void processMove(Player p) {
-		for (int i = 0; i < p.hands.size(); ++i) {
-			boolean donePlaying = false;
-			
-			while (! donePlaying) {
-				switch (p.getMove()) {
-				case HIT:
-					p.addCard(this.deck.getCard(), i);
-					donePlaying = p.getSum(i) >= 21;
-					break;
-				case STAY:
-					donePlaying = true;
-					break;
-				case DOUBLE:
-					donePlaying = true;
-					p.addCard(this.deck.getCard(), i);
-					p.setBet(p.getBet() * 2);
-					p.doubled = true;
-					break;
-				case SPLIT:
-					p.split();
-					donePlaying = p.getSum(i) > 21;
-					break;
-				default:
-					break;
-				}
-				
-				System.out.println(p.getSum(i));
-			}
-		}
-	}
-	
-	private void dealerMove() {
-		while (this.dealer.getSum(0) < 17) {
-			this.dealer.addCard(this.deck.getCard(), 0);
-		}
-	}
-	
-	public static void main(String[] args) {
-		new Game();
 	}
 }

@@ -23,6 +23,7 @@ public class LobbyServer extends JFrame{
 	private JTextArea serverView;
 	private Connection c;
 	public static ArrayList <String> friends = new ArrayList <String>();
+	public static ArrayList <Boolean> onlineornot = new ArrayList <Boolean>();
 	public LobbyServer() {
 		super ("Lobby Server");
 		setSize(600,600);
@@ -33,7 +34,7 @@ public class LobbyServer extends JFrame{
 		try{
 			@SuppressWarnings("resource")
 			ServerSocket ss = new ServerSocket(3001);
-			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "3Rdplacespel");
+			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "");
 		
 			while (true) {
 				Socket s = ss.accept();
@@ -50,8 +51,10 @@ public class LobbyServer extends JFrame{
 					PrintWriter pwr = new PrintWriter(s.getOutputStream());
 					ArrayList <String> tempfriends = new ArrayList <String>();
 					tempfriends = findFriends(username);
+					checkOnline(tempfriends);
 					for(int x = 0; x< tempfriends.size(); x++){
-						pwr.println(tempfriends.get(x));
+						pwr.println(onlineornot.get(x));
+						pwr.println(tempfriends.get(x));		
 						pwr.flush();
 					}
 					pwr.println("break-list");
@@ -85,6 +88,26 @@ public class LobbyServer extends JFrame{
 		} catch (SQLException sqle) {
 			System.out.println("SQL Error: " + sqle.getMessage());
 			System.exit(1);
+		}
+	}
+	private void checkOnline(ArrayList <String> names){
+		for(int x = 0; x< names.size(); x++){
+			PreparedStatement select_user_query;
+			try {
+				select_user_query = c.prepareStatement("SELECT ready_to_play FROM user WHERE username = ?");
+				select_user_query.setString(1,  names.get(x));
+				ResultSet rs = select_user_query.executeQuery();
+				rs.next();
+				int ready = rs.getInt("ready_to_play");
+				if(ready == 1){
+					onlineornot.add(true);
+				}
+				else
+					onlineornot.add(false);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	private ArrayList <String> findFriends(String username){

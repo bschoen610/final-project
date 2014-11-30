@@ -1,5 +1,6 @@
 package client;
 import game.GamePanel;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Font;
@@ -12,19 +13,24 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 
 public class LobbyPanel extends JPanel implements ActionListener{
 	private static final long serialVersionUID = -8069773572372219648L;
 	private String un;
-	JTextArea friendList = new JTextArea(10, 10);;
+	JTextPane friendList = new JTextPane();
 	private JButton join = new JButton("Join Game");
 	private JLabel title;
 	private JButton logout = new JButton("Logout");
@@ -34,7 +40,14 @@ public class LobbyPanel extends JPanel implements ActionListener{
 		setupGUI();
 		addEventHandler();
 	}
-	
+	public void append(String s) {
+		   try {
+		      Document doc = friendList.getDocument();
+		      doc.insertString(doc.getLength(), s, null);
+		   } catch(BadLocationException exc) {
+		      exc.printStackTrace();
+		   }
+		}
 	private void setupGUI(){
 		this.setLayout(new BorderLayout());
 		this.add(join, BorderLayout.WEST);
@@ -48,7 +61,6 @@ public class LobbyPanel extends JPanel implements ActionListener{
 		JScrollPane scrollPane = new JScrollPane(friendList);
 		friendList.setEditable(false);
 		populateFriendList();
-		//System.out.println ("HI");
 		east.add(scrollPane, BorderLayout.CENTER);
 		east.add(logout, BorderLayout.NORTH);
 		east.add(addFriend, BorderLayout.SOUTH);
@@ -87,13 +99,25 @@ public class LobbyPanel extends JPanel implements ActionListener{
 			pwr.println(this.un);
 			pwr.flush();
 			friendList.setText("");
+			int counter  = 0;
 			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 			while(true){
 				final String line = br.readLine();
-			    if (line.equals("break-list")) break;
-			    else
-			    	friendList.append(line);
-			    friendList.append("\n");
+			    if (line.equals("break-list") ) break;
+			    else{
+			    	if(counter %2 == 1)	// checks to see if line being read is a name or a boolean
+			    		append(" " + line);
+			    	else{
+			    		if(line.equals("true")){
+			    			friendList.insertIcon ( new ImageIcon ( "logged-in.png" ) );
+			    		}
+			    		else
+			    			friendList.insertIcon ( new ImageIcon ( "logged-out.png" ) );
+			    	}
+			    }
+			    if(counter %2 == 1)
+			    	append("\n");
+			    counter++;
 			}
 		
 			

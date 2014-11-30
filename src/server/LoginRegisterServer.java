@@ -32,7 +32,7 @@ public class LoginRegisterServer extends JFrame{
 		try{
 			@SuppressWarnings("resource")
 			ServerSocket ss = new ServerSocket(60500);
-			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "3Rdplacespel");
+			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "");
 		
 			while (true) {
 				Socket s = ss.accept();

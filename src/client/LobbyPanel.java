@@ -15,12 +15,17 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
+
+import server.LobbyServer;
 
 
 public class LobbyPanel extends JPanel implements ActionListener{
 	private static final long serialVersionUID = -8069773572372219648L;
 	private String un;
+	JTextArea textArea;
 	private JButton join = new JButton("Join Game");
 	private JLabel title;
 	private JButton logout = new JButton("Logout");
@@ -41,6 +46,11 @@ public class LobbyPanel extends JPanel implements ActionListener{
 		this.add(north, BorderLayout.NORTH);
 		JPanel east = new JPanel(new BorderLayout());
 		east.setBorder(new EmptyBorder(10,10,10,10));
+		textArea = new JTextArea(10, 10);
+		JScrollPane scrollPane = new JScrollPane(textArea);
+		populateFriendList();
+		//System.out.println ("HI");
+		east.add(scrollPane, BorderLayout.CENTER);
 		east.add(logout, BorderLayout.NORTH);
 		east.add(addFriend, BorderLayout.SOUTH);
 		this.add(east, BorderLayout.EAST);
@@ -62,9 +72,35 @@ public class LobbyPanel extends JPanel implements ActionListener{
 			String friend = JOptionPane.showInputDialog("Enter a friend's username.");
 			if (friend == null) return;
 			addFriend(friend);
+			populateFriendList();
 		}
 	}
-	
+	private void populateFriendList(){
+		try {
+			Socket s = new Socket("localhost", 3001);
+			PrintWriter pwr = new PrintWriter(s.getOutputStream());
+			pwr.println("populate");
+			pwr.println(this.un);
+			pwr.flush();
+			textArea.setText("");
+			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			while(true){
+				final String line = br.readLine();
+			    if (line.equals("break-list")) break;
+			    else
+			    	textArea.append(line);
+				textArea.append("\n");
+			}
+		
+			
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
 	private void logout(){
 		try {
 			Socket s = new Socket("localhost", 3001);

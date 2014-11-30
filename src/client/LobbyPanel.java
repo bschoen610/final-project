@@ -1,5 +1,6 @@
 package client;
 import game.GamePanel;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Font;
@@ -24,13 +25,16 @@ import javax.swing.border.EmptyBorder;
 public class LobbyPanel extends JPanel implements ActionListener{
 	private static final long serialVersionUID = -8069773572372219648L;
 	private String un;
+	private double balance;
 	JTextArea friendList = new JTextArea(10, 10);;
 	private JButton join = new JButton("Join Game");
 	private JLabel title;
 	private JButton logout = new JButton("Logout");
 	private JButton addFriend = new JButton("Add Friend");
+	private JLabel balanceLabel = new JLabel("");
 	public LobbyPanel(String un) {
 		this.un = un;
+		setupAccountInfo();
 		setupGUI();
 		addEventHandler();
 	}
@@ -42,6 +46,8 @@ public class LobbyPanel extends JPanel implements ActionListener{
 		this.title.setFont(new Font("Serif", Font.BOLD, 20));
 		JPanel north = new JPanel();
 		north.add(title);
+		balanceLabel.setText("" + this.balance);
+		north.add(balanceLabel);
 		this.add(north, BorderLayout.NORTH);
 		JPanel east = new JPanel(new BorderLayout());
 		east.setBorder(new EmptyBorder(10,10,10,10));
@@ -148,10 +154,32 @@ public class LobbyPanel extends JPanel implements ActionListener{
 		}
 	}
 	
+	private void getBalance(){
+		Socket s;
+		try {
+			s = new Socket("localhost", 3001);
+			PrintWriter pwr = new PrintWriter(s.getOutputStream());
+			pwr.println("Balance");
+			pwr.println(this.un);
+			
+			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			double balance = Double.parseDouble(br.readLine());
+			this.balance = balance;
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		
+		
+	}
+	
 	private void joinGame(){
 		Container parent = this.getParent();
 		parent.remove(this);
-		parent.add(new GamePanel(un));
+		parent.add(new GamePanel(un, balance));
 		parent.validate();
 		parent.repaint();
 	}

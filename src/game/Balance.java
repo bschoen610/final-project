@@ -1,11 +1,11 @@
 package game;
 
 public class Balance implements Message {
-	public final int amt;
+	public final double amt;
 	public final String username;
 	
-	public Balance(String username, int amt) {
+	public Balance(String username, double balance) {
 		this.username = username;
-		this.amt = amt;
+		this.amt = balance;
 	}
 }

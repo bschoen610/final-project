@@ -73,6 +73,11 @@ public class LobbyServer extends JFrame{
 					pwr.println("break-list");
 					pwr.flush();
 				}
+				else if (type.equals("Balance")){
+					PrintWriter pwr = new PrintWriter(s.getOutputStream());
+					pwr.println(getBalance(username));
+					pwr.flush();
+				}
 				else {
 					System.out.println("What is " + type + "?");
 					System.exit(1);
@@ -127,6 +132,20 @@ public class LobbyServer extends JFrame{
 			System.exit(1);
 		}
 		
+	}
+	
+	private double getBalance(String username){
+		try{
+			PreparedStatement query = c.prepareStatement("SELECT currency FROM user WHERE username = ?");
+			query.setString(1, username);
+			ResultSet rs = query.executeQuery();
+			rs.next();
+			return rs.getDouble("currency");
+		}catch (SQLException sqle) {
+			sqle.printStackTrace();
+			System.exit(1);
+			return -1;
+		}
 	}
 	
 	private String addFriend(String un, String friend){

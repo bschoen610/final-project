@@ -9,23 +9,23 @@ import java.net.Socket;
 import java.util.Vector;
 
 public class Player {
-	int bet;
-	int balance;
+	double bet;
+	double balance;
 	public Socket s;
 	public String username;
 	public Vector<Vector<Card>> hands = new Vector<Vector<Card>>(2);
 	public boolean doubled;
 	
-	public Player(Socket s, String username) {
+	public Player(Socket s, String username, double balance) {
 		this.s = s;
 		this.username = username;
 		this.bet = 0;
-		this.balance = 1000;
+		this.balance = balance;
 		this.doubled = false;
 		this.addHand();
 	}
 	
-	public void changeBalance(int amt) {
+	public void changeBalance(double amt) {
 		this.balance += amt;
 	}
 	
@@ -133,11 +133,11 @@ public class Player {
 		this.bet = 1;
 	}
 	
-	public int getBet() {
+	public double getBet() {
 		return this.bet;
 	}
 	
-	public void setBet(int bet) {
+	public void setBet(double bet) {
 		this.bet = bet;
 	}
 }

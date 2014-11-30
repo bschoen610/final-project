@@ -1,9 +1,9 @@
 package game;
 
-public class Stay implements Message {
+public class Leave implements Message {
 	public final String username;
 	
-	public Stay(String username) {
+	public Leave(String username) {
 		this.username = username;
 	}
 }

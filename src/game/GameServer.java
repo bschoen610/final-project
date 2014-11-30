@@ -69,7 +69,6 @@ public class GameServer {
 		try {
 			ois = new ObjectInputStream(s.getInputStream());
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 		

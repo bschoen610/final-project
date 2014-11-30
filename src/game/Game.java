@@ -1,11 +1,12 @@
 package game;
 
 import java.io.IOException;
-import java.io.InterruptedIOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 public class Game implements Runnable {
@@ -27,14 +28,16 @@ public class Game implements Runnable {
 		SPLIT,
 	}
 	
-	HashMap<String, Socket> userSocketMap;
-	Vector<Player> players = new Vector<Player>();
-	Player dealer = new Player(-1);
+	HashMap<String, Player> players;
+	Player dealer = new Player(null, "_DEALER");
 	Deck deck;
 	ServerSocket ss;
 	
-	public Game(HashMap<String, Socket> userSocketMap) {
-		this.userSocketMap = userSocketMap;
+	public Game(HashMap<String, Socket> playerSockets) {
+		this.players = new HashMap<String, Player>();
+		for (Map.Entry<String, Socket> e : playerSockets.entrySet()) {
+			this.players.put(e.getKey(), new Player(e.getValue(), e.getKey()));
+		}
 	}
 		
 	private void processMove(Player p) {
@@ -64,7 +67,7 @@ public class Game implements Runnable {
 					break;
 				}
 				
-				System.out.println(p.getSum(i));
+				sendToAll(new Deal(this.getHandsMap()));
 			}
 		}
 	}
@@ -76,70 +79,135 @@ public class Game implements Runnable {
 	}
 
 	public void run() {
-		for (Player p : this.players) {
-			p.readBet();
+		Vector<String> usernames = new Vector<String>(this.players.size());
+		
+		for (String un : this.players.keySet()) {
+			usernames.add(un);
+		}
+		
+		sendToAll(new StartGame(usernames));
+		
+		for (Map.Entry<String, Player> e : this.players.entrySet()) {
+			StartBet sb = new StartBet(e.getKey());
+			sendToAll(sb);
+			
+			ObjectInputStream ois = null;
+			
+			try {
+				ois = new ObjectInputStream(e.getValue().s.getInputStream());
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
+			try {
+				Bet b = (Bet) ois.readObject();
+			} catch (ClassNotFoundException | IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 
 		this.deck = new Deck();
 		
-		for (Player p : this.players) {
+		for (Player p : this.players.values()) {
 			for (int i = 0; i < 2; ++i) {
 				p.addCard(this.deck.getCard(), 0);
 			}
 		}
 		
+		
 		for (int i = 0; i < 2; ++i) {
 			this.dealer.addCard(this.deck.getCard(), 0);
 		}
 		
-		for (Player p : this.players) {
-			int sum = p.getSum(0);
+		HashMap<String, Vector<Card>> updates = this.getHandsMap();
+		
+		updates.put("_DEALER", this.dealer.hands.firstElement());
+		
+		Deal d = new Deal(updates);
+		
+		sendToAll(d);
+		
+		for (Map.Entry<String, Player> e : this.players.entrySet()) {
+			Player p = e.getValue();
+			int sum = e.getValue().getSum(0);
 			
 			if (sum == 21) {
-				System.out.println("Blackjack");
+				// inform group of win
 				p.changeBalance((int)(p.getBet() * 1.5));
-				this.players.remove(p);
-			} else {
-				System.out.println(sum);
+				sendToAll(new Stay(e.getKey()));
+				p.doubled = true;
 			}
 		}
 		
 		boolean donePlaying = false;
 		
-		for (Player p : this.players) {
+		for (Player p : this.players.values()) {
 			this.processMove(p);
 		}
 		
 		this.dealerMove();
 				
-		for (Player p : this.players) {
+		for (Player p : this.players.values()) {
 			for (int i = 0; i < p.hands.size(); ++i) {
 				int sum = p.getSum(i);
 				if (sum <= 21) {
 					for (int j = 0; j < this.dealer.hands.size(); ++j) {
 						int dealerSum = this.dealer.getSum(j);
 						if (sum > dealerSum) {
-							System.out.println("Player " + p.id + " wins with " + sum + " vs " + dealerSum);
+							// player wins
 							p.changeBalance(p.getBet());
-							p.setBet(0);
 						} else if (sum < dealerSum) {
-							System.out.println("Player " + p.id + " loses with " + sum + " vs " + dealerSum);
+							// player loses
 							p.changeBalance(-p.getBet());
 						} else {
-							System.out.println("Player " + p.id + " pushes with " + sum);
+							// player pushes
 						}
 					}
 				} else {
-					System.out.println("Player " + p.id + " busts");
 					p.changeBalance(-p.getBet());
 				}
 			}
 			
+			sendToAll(new Balance(p.username, p.balance));
+			
 			p.setBet(0);
 			
 			if (p.isBankrupt()) {
-				System.out.println("bankrupt");
+				sendToAll(new Leave(p.username));
+				this.players.remove(p);
 			}
 		}
+	}
+	
+	private void sendToAll(Message m) {
+		for (Player p : this.players.values()) {
+			ObjectOutputStream oos = null;
+			
+			try {
+				oos = new ObjectOutputStream(p.s.getOutputStream());
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			try {
+				oos.writeObject(m);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			try {
+				oos.flush();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+	
+	private HashMap<String, Vector<Card>> getHandsMap() {
+		HashMap<String, Vector<Card>> updates = new HashMap<String, Vector<Card>>();
+		
+		for (Map.Entry<String, Player> e : this.players.entrySet()) {
+			updates.put(e.getKey(), e.getValue().hands.firstElement());
+		}
+		
+		return updates;
 	}
 }

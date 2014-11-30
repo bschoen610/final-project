@@ -2,18 +2,23 @@ package game;
 
 import game.Game.Move;
 
-import java.util.Scanner;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.Vector;
 
 public class Player {
 	int bet;
 	int balance;
-	int id;
+	public Socket s;
+	public String username;
 	public Vector<Vector<Card>> hands = new Vector<Vector<Card>>(2);
 	public boolean doubled;
 	
-	public Player(int ida) {
-		this.id = ida;
+	public Player(Socket s, String username) {
+		this.s = s;
+		this.username = username;
 		this.bet = 0;
 		this.balance = 1000;
 		this.doubled = false;
@@ -71,53 +76,53 @@ public class Player {
 	}
 	
 	public Move getMove() {
-		System.out.print("What would you like to do, player " + this.id + "? ");
+		if (this.doubled) return Move.STAY;
 		
-		for (Vector<Card> hand : this.hands) {
-			System.out.print("(");
-			
-			for (Card card : hand) {
-				System.out.print(card.face + 1 + ", ");
-			}
-			
-			System.out.print(")");
+		ObjectOutputStream oos = null;
+		
+		try {
+			oos = new ObjectOutputStream(this.s.getOutputStream());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		try {
+			oos.writeObject(new StartMove(this.username));
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
+		try {
+			oos.flush();
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 		
-		Scanner s = new Scanner(System.in);
-		int move = s.nextInt();
+		ObjectInputStream ois = null;
 		
-		Move ret;
+		try {
+			ois = new ObjectInputStream(this.s.getInputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
-		switch (move) {
-		case 0:
-			ret = Move.HIT;
-			break;
-		case 1:
-			ret = Move.STAY;
-			break;
-		case 2:
-			ret = Move.DOUBLE;
-			break;
-		case 3:
-			ret = Move.SPLIT;
-			break;
-		default:
-			ret = null;
-			break;
+		MoveMessage mm = null;
+		try {
+			mm = (MoveMessage) ois.readObject();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		
 		Vector<Card> firstHand = this.hands.firstElement();
 		
-		if (ret == Move.SPLIT
+		if (mm.move == Move.SPLIT
 				&& (this.hands.size() > 1
 						|| firstHand.size() > 2
 						|| firstHand.firstElement().face != firstHand.lastElement().face)) {
 			System.out.println("Split in invalid scenario, this shouldn't happen");
 		}
 		
-		if (doubled) ret = Move.STAY;
-		
-		return ret;
+		return mm.move;
 	}
 	
 	public void readBet() {/*

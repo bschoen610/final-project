@@ -5,6 +5,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -20,7 +25,7 @@ public class Game implements Runnable {
 	public static final int MILLIS_PER_SEC = 1000;
 	public static final int JOIN_TIME_SEC = 10;
 	public static final int JOIN_TIME = JOIN_TIME_SEC * MILLIS_PER_SEC;
-	
+	private Connection c;
 	public enum Move {
 		HIT,
 		STAY,
@@ -29,15 +34,31 @@ public class Game implements Runnable {
 	}
 	
 	HashMap<String, Player> players;
-	Player dealer = new Player(null, "_DEALER");
+	Player dealer = new Player(null, "_DEALER", 1000);
 	Deck deck;
 	ServerSocket ss;
 	
 	public Game(HashMap<String, Socket> playerSockets) {
 		this.players = new HashMap<String, Player>();
 		for (Map.Entry<String, Socket> e : playerSockets.entrySet()) {
-			this.players.put(e.getKey(), new Player(e.getValue(), e.getKey()));
+			this.players.put(e.getKey(), new Player(e.getValue(), e.getKey(), getCurrency(e.getKey())));
 		}
+	}
+	
+	private double getCurrency(String un){
+		try {
+			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "3Rdplacespel");
+			PreparedStatement query = c.prepareStatement("SELECT currency FROM user WHERE username = ?");
+			query.setString(1, un);
+			ResultSet rs = query.executeQuery();
+			rs.next();
+			return rs.getDouble("currency");
+		} catch (SQLException e) {
+			System.out.println("Problem connecting to the DB from GAME: " + e.getMessage());
+			System.exit(1);
+			return -1;
+		}
+		
 	}
 		
 	private void processMove(Player p) {

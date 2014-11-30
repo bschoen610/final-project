@@ -34,7 +34,7 @@ public class LobbyServer extends JFrame{
 		try{
 			@SuppressWarnings("resource")
 			ServerSocket ss = new ServerSocket(3001);
-			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "");
+			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "3Rdplacespel");
 		
 			while (true) {
 				Socket s = ss.accept();
@@ -74,6 +74,11 @@ public class LobbyServer extends JFrame{
 						pwr.flush();
 					}
 					pwr.println("break-list");
+					pwr.flush();
+				}
+				else if (type.equals("Balance")){
+					PrintWriter pwr = new PrintWriter(s.getOutputStream());
+					pwr.println(getBalance(username));
 					pwr.flush();
 				}
 				else {
@@ -150,6 +155,20 @@ public class LobbyServer extends JFrame{
 			System.exit(1);
 		}
 		
+	}
+	
+	private double getBalance(String username){
+		try{
+			PreparedStatement query = c.prepareStatement("SELECT currency FROM user WHERE username = ?");
+			query.setString(1, username);
+			ResultSet rs = query.executeQuery();
+			rs.next();
+			return rs.getDouble("currency");
+		}catch (SQLException sqle) {
+			sqle.printStackTrace();
+			System.exit(1);
+			return -1;
+		}
 	}
 	
 	private String addFriend(String un, String friend){

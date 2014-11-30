@@ -106,6 +106,12 @@ public class GameServer extends JFrame{
 	}
 	
 	public static void main(String[] args) {
+		try{
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException cnfe){
+			cnfe.printStackTrace();
+			System.exit(1);
+		}
 		new GameServer();
 	}
 }

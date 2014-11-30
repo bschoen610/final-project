@@ -11,6 +11,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -21,7 +22,7 @@ public class LobbyServer extends JFrame{
 	private JPanel main;
 	private JTextArea serverView;
 	private Connection c;
-	
+	public static ArrayList <String> friends = new ArrayList <String>();
 	public LobbyServer() {
 		super ("Lobby Server");
 		setSize(600,600);
@@ -32,7 +33,7 @@ public class LobbyServer extends JFrame{
 		try{
 			@SuppressWarnings("resource")
 			ServerSocket ss = new ServerSocket(3001);
-			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "3Rdplacespel");
+			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "");
 		
 			while (true) {
 				Socket s = ss.accept();
@@ -44,10 +45,32 @@ public class LobbyServer extends JFrame{
 					serverView.append("Logging out " + username + "\n");
 					logout(username);
 				}
+				else if(type.equals("populate")){
+					serverView.append("Populating friends list.... "  + "\n");
+					PrintWriter pwr = new PrintWriter(s.getOutputStream());
+					ArrayList <String> tempfriends = new ArrayList <String>();
+					tempfriends = findFriends(username);
+					for(int x = 0; x< tempfriends.size(); x++){
+						pwr.println(tempfriends.get(x));
+						pwr.flush();
+					}
+					pwr.println("break-list");
+					pwr.flush();
+		
+				}
 				else if (type.equals("AddFriend")){
 					String friend = br.readLine();
 					PrintWriter pwr = new PrintWriter(s.getOutputStream());
 					pwr.println(addFriend(username, friend));
+					pwr.flush();
+					serverView.append("Populating friends list.... "  + "\n");
+					ArrayList <String> tempfriends = new ArrayList <String>();
+					tempfriends = findFriends(username);
+					for(int x = 0; x< tempfriends.size(); x++){
+						pwr.println(tempfriends.get(x));
+						pwr.flush();
+					}
+					pwr.println("break-list");
 					pwr.flush();
 				}
 				else {
@@ -64,13 +87,41 @@ public class LobbyServer extends JFrame{
 			System.exit(1);
 		}
 	}
-	
-	
+	private ArrayList <String> findFriends(String username){
+		try {
+			PreparedStatement select_user_query;
+			select_user_query = c.prepareStatement("SELECT uid FROM user WHERE username = ?");
+			select_user_query.setString(1,  username);
+			ResultSet rs = select_user_query.executeQuery();
+			rs.next();
+			int uid = rs.getInt("uid");
+			PreparedStatement find_all_friends_query = c.prepareStatement("SELECT fid FROM user_friend_relational WHERE uid = ?");
+			find_all_friends_query.setInt(1,  uid);
+			ResultSet result = find_all_friends_query.executeQuery();
+			while (result.next()) {
+				int fid2 = result.getInt("fid");
+				PreparedStatement find_all_friends_names_query = c.prepareStatement("SELECT username FROM user WHERE uid = ?");
+				find_all_friends_names_query.setInt(1,  fid2);
+				ResultSet friendnames = find_all_friends_names_query.executeQuery();
+				while(friendnames.next()){
+					if (!friends.contains(friendnames.getString("username"))){
+						friends.add(friendnames.getString("username"));
+					}
+				}
+		    }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return friends;
+		
+	}
 	private void logout(String username){
 		try {
 			PreparedStatement query = c.prepareStatement("UPDATE user SET ready_to_play=false WHERE username = ?");
 			query.setString(1, username);
 			query.execute();
+			friends.clear();
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 			System.exit(1);
@@ -106,6 +157,9 @@ public class LobbyServer extends JFrame{
 			add_friendship.setInt(1, fid);
 			add_friendship.setInt(2, uid);
 			add_friendship.execute();
+			
+			
+			
 			return "User Added!";
 		} catch (SQLException sqle){
 			System.out.println("Problem adding friend: " +sqle.getMessage());

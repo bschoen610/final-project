@@ -18,6 +18,7 @@ public class GameServer extends JFrame{
 	private JPanel main;
 	private JTextArea serverView;
 	public GameServer() {
+		super ("Game Server");
 		setSize(600,600);
 		setupGUI();
 		setVisible(true);
@@ -38,8 +39,9 @@ public class GameServer extends JFrame{
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
-		
-		userSocketMap.put(usernameFromSocket(s), s);
+		String username = usernameFromSocket(s);
+		serverView.append("Checking in " + username + "\n");
+		userSocketMap.put(username, s);
 		
 		try {
 			// throw interrupted exception after JOIN_TIME seconds
@@ -59,7 +61,9 @@ public class GameServer extends JFrame{
 				e.printStackTrace();
 			}
 			
-			userSocketMap.put(usernameFromSocket(s), s);
+			username = usernameFromSocket(s);
+			serverView.append("Checking in " + username + "\n");
+			userSocketMap.put(username, s);
 		}
 		
 		new Game(userSocketMap).run();

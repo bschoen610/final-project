@@ -1,4 +1,5 @@
 package client;
+import game.GamePanel;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Font;
@@ -19,13 +20,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
-import server.LobbyServer;
-
 
 public class LobbyPanel extends JPanel implements ActionListener{
 	private static final long serialVersionUID = -8069773572372219648L;
 	private String un;
-	JTextArea textArea;
+	JTextArea friendList = new JTextArea(10, 10);;
 	private JButton join = new JButton("Join Game");
 	private JLabel title;
 	private JButton logout = new JButton("Logout");
@@ -46,8 +45,8 @@ public class LobbyPanel extends JPanel implements ActionListener{
 		this.add(north, BorderLayout.NORTH);
 		JPanel east = new JPanel(new BorderLayout());
 		east.setBorder(new EmptyBorder(10,10,10,10));
-		textArea = new JTextArea(10, 10);
-		JScrollPane scrollPane = new JScrollPane(textArea);
+		JScrollPane scrollPane = new JScrollPane(friendList);
+		friendList.setEditable(false);
 		populateFriendList();
 		//System.out.println ("HI");
 		east.add(scrollPane, BorderLayout.CENTER);
@@ -61,6 +60,8 @@ public class LobbyPanel extends JPanel implements ActionListener{
 		this.logout.addActionListener(this);
 		this.addFriend.setActionCommand("addFriend");
 		this.addFriend.addActionListener(this);
+		this.join.setActionCommand("join");
+		this.join.addActionListener(this);
 	}
 
 	@Override
@@ -74,6 +75,9 @@ public class LobbyPanel extends JPanel implements ActionListener{
 			addFriend(friend);
 			populateFriendList();
 		}
+		else if (ae.getActionCommand().equals("join")){
+			joinGame();
+		}
 	}
 	private void populateFriendList(){
 		try {
@@ -82,14 +86,14 @@ public class LobbyPanel extends JPanel implements ActionListener{
 			pwr.println("populate");
 			pwr.println(this.un);
 			pwr.flush();
-			textArea.setText("");
+			friendList.setText("");
 			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 			while(true){
 				final String line = br.readLine();
 			    if (line.equals("break-list")) break;
 			    else
-			    	textArea.append(line);
-				textArea.append("\n");
+			    	friendList.append(line);
+			    friendList.append("\n");
 			}
 		
 			
@@ -142,5 +146,13 @@ public class LobbyPanel extends JPanel implements ActionListener{
 			e.printStackTrace();
 			System.exit(1);
 		}
+	}
+	
+	private void joinGame(){
+		Container parent = this.getParent();
+		parent.remove(this);
+		parent.add(new GamePanel(un));
+		parent.validate();
+		parent.repaint();
 	}
 }

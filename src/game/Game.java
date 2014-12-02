@@ -47,7 +47,7 @@ public class Game implements Runnable {
 	
 	private double getCurrency(String un){
 		try {
-			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "3Rdplacespel");
+			c = DriverManager.getConnection("jdbc:mysql://localhost/CardShark", "root", "");
 			PreparedStatement query = c.prepareStatement("SELECT currency FROM user WHERE username = ?");
 			query.setString(1, un);
 			ResultSet rs = query.executeQuery();

@@ -108,7 +108,7 @@ public class LoginRegisterServer extends JFrame{
 			PreparedStatement query = c.prepareStatement("INSERT INTO user (first_name, last_name, username, password, email, currency, wins, losses, avatar_path, ready_to_play) "
 					+ "VALUES(?,?,?,?,?,?,?,?,?,?);" );
 			query.setString(1, firstName); query.setString(2,  lastName); query.setString(3, un); query.setString(4, password); query.setString(5,  email);
-			query.setDouble(6, 0.00); query.setInt(7, 0); query.setInt(8, 0); query.setString(9, "PATH_GOES_HERE"); query.setBoolean(10, false);
+			query.setDouble(6, 1000.00); query.setInt(7, 0); query.setInt(8, 0); query.setString(9, "PATH_GOES_HERE"); query.setBoolean(10, false);
 			query.execute();
 			return true;
 		} catch(SQLException sqle){

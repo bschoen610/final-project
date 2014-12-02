@@ -34,7 +34,7 @@ public class LobbyServer extends JFrame{
 		try{
 			@SuppressWarnings("resource")
 			ServerSocket ss = new ServerSocket(3001);
-			c = DriverManager.getConnection("jdbc:mysql://localhost/cardshark", "root", "3Rdplacespel");
+			c = DriverManager.getConnection("jdbc:mysql://localhost/CardShark", "root", "");
 		
 			while (true) {
 				Socket s = ss.accept();

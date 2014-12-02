@@ -1,7 +1,10 @@
 package game;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +17,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
@@ -28,10 +32,13 @@ public class GamePanel extends JPanel implements ActionListener{
 	private JButton leave = new JButton("Leave");
 	private JTextField betAmount = new JTextField(25);
 	private String un = "";
+	private double chipCount = 0;
+	private JTextArea chipCountText = new JTextArea();
 	private static final long serialVersionUID = 239847298347L;
 	public GamePanel(String un, double balance) {
 		setupGUI();
 		this.un = un;
+		chipCount = balance;
 		try {
 			s = new Socket("localhost", 60502);
 			oos = new ObjectOutputStream(s.getOutputStream());
@@ -61,6 +68,7 @@ public class GamePanel extends JPanel implements ActionListener{
 		leave.setActionCommand("leave");
 		east.add(leave, BorderLayout.NORTH);
 		this.add(east, BorderLayout.EAST);
+	
 		
 		
 		repaint();
@@ -76,6 +84,10 @@ public class GamePanel extends JPanel implements ActionListener{
 	    super.paintComponent(page);
 	    Image img = new ImageIcon("./data/cardmat.jpg").getImage();
 	    page.drawImage( img, 0, 0, null );
+	   
+	    page.setColor(Color.RED);
+	    page.setFont(new Font("Helvetica", Font.BOLD, 20));
+		page.drawString("Chip count" + chipCount, 510, 530);
 	}
 
 	public void actionPerformed(ActionEvent ae) {

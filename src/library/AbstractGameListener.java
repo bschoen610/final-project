@@ -7,14 +7,14 @@ import java.util.Vector;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-public class GameListener implements PropertyChangeListener, ListDataListener {
-	GamePlay gamePlay; 
-	PlayerContainer playerContainer; 
-	Vector<Player> playerList = new Vector<Player>(); 
+public abstract class AbstractGameListener implements PropertyChangeListener, ListDataListener {
+	protected GamePlay gamePlay; 
+	protected PlayerContainer playerContainer; 
+	protected Vector<Player> playerList = new Vector<Player>(); 
 	
 	
 	//will need to add an argument that acts as a reference to the server 
-	public GameListener(GamePlay gameState)
+	public AbstractGameListener(GamePlay gameState)
 	{
 		this.gamePlay = gameState; 
 		this.gamePlay.addPropertyChangeListener(this);
@@ -29,7 +29,7 @@ public class GameListener implements PropertyChangeListener, ListDataListener {
 		Object source = evt.getSource(); 
 		//true if source is coming from player
 		if(source instanceof Player){
-			Player tempPlayer = (Player)source;
+			Player tempPlayer =   (Player)source;
 			//method for dealing with propertyChanges in players
 			playerPropertyChange(evt, tempPlayer);
 		}
@@ -38,11 +38,17 @@ public class GameListener implements PropertyChangeListener, ListDataListener {
 			handPropertyChange(evt, tempHand);
 		}
 		else if(source == this.gamePlay.getDealer()){
-			
+			Dealer tempDealer = (Dealer)source; 
+			dealerPropertyChange(evt, tempDealer);
+		}
+		else if(source == this.gamePlay){
+			GamePlay tempGamePlay = (GamePlay)source; 
+			gamePlayPropertyChange(evt, tempGamePlay);
 		}
 		
 		//TODO add all of the possible else if's for Class's that could fire property changes
 	}
+
 
 	@Override
 	public void intervalAdded(ListDataEvent e) {
@@ -71,7 +77,8 @@ public class GameListener implements PropertyChangeListener, ListDataListener {
 		
 	}
 	
-	private void playerAdded(ListDataEvent e)
+	//ListData Events
+	protected void playerAdded(ListDataEvent e)
 	{
 		
 		//whenever a player is added you have to add this gameListener object as a listener to events that a player could raise
@@ -81,12 +88,14 @@ public class GameListener implements PropertyChangeListener, ListDataListener {
 			Player tempPlayer = playerContainer.getPlayer(i); 
 			//tempPlayer.addListDataChangeListener(this);
 			tempPlayer.addPropertyChangeListener(this);
-			playerList.add(tempPlayer);
-			
+			playerList.add(tempPlayer);			
 		}
+		
+		//This might tell the UI to show a player
+		
 	}
 	
-	private void playerRemoved(ListDataEvent e)
+	protected void playerRemoved(ListDataEvent e)
 	{
 		//would send a leave message for players leaving
 		for(int i = e.getIndex0(); i <= e.getIndex1(); i++)
@@ -98,45 +107,23 @@ public class GameListener implements PropertyChangeListener, ListDataListener {
 			
 		}
 	}
-	
-	private void playerPropertyChange(PropertyChangeEvent pce, Player player)
-	{
-		//This would make decisions based on the properties that player could change
-		//basically a big if then else that compares name of pce.getPropertyName() and decides what to do for each
-		String propertyName = pce.getPropertyName();
-		
-		if(propertyName.equals("numHands")){
-			if((int)pce.getNewValue() > (int)pce.getOldValue()){
-				Hand newHand = player.getHand(player.getNumHands() - 1);
-				newHand.addPropertyChangeListener(this);
-				newHand.addListDataChangeListener(this);
-			}
-		}
-		
-		//TODO add all of the else if's for types of property changes a player can fire
-		
-	}
-	
-	//TODO add propertyChange methods for all classes that could fire propertyCahgnes
-	//these methods would be called in the propertyCahnge method under the else if for their specific class 
-	//TODO gameplay itself raises some events, so need to add methods for that - gamePlayPropertyChange for instance
-	//basically any class that calls firePropertyChange needs to be included here and in the propertyChange method of this class (it's own else if case)
 
-	private void handPropertyChange(PropertyChangeEvent pce, Hand hand)
-	{
-		
-	}
-	private void handCardAdded(ListDataEvent e, Hand hand)
-	{
-		
-	}
-	private void handCardRemoved(ListDataEvent e, Hand hand)
-	{
-		
-	}
+	protected abstract void handCardAdded(ListDataEvent e, Hand hand);
+
+	protected abstract void handCardRemoved(ListDataEvent e, Hand hand);
+
+	//Property Change Events
 	
-	//TODO add all removed and added methods for classes that can fire listEventChanges. weve already done playerContainer and Hand 
-	//Basically any class that calls fireIntervalAdded or fireIntervalRemoved needs to be included here and in the intervalAdded and intervalRemoved cases (their own else if cases)
+	protected abstract void dealerPropertyChange(PropertyChangeEvent evt, Dealer tempDealer);
+		
+	protected abstract void deckPropertyChange(PropertyChangeEvent evt, DeckOfCards tempDeck);
+	
+	protected abstract void gamePlayPropertyChange(PropertyChangeEvent evt, GamePlay tempGamePlay); 
+	
+	protected abstract void playerPropertyChange(PropertyChangeEvent pce, Player player);
+
+	protected abstract void handPropertyChange(PropertyChangeEvent pce, Hand hand);
+	
 	
 
 }

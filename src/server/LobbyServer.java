@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 public class LobbyServer extends JFrame{
@@ -24,6 +25,7 @@ public class LobbyServer extends JFrame{
 	private Connection c;
 	public static ArrayList <String> friends = new ArrayList <String>();
 	public static ArrayList <Boolean> onlineornot = new ArrayList <Boolean>();
+	int counter = 0;
 	public LobbyServer() {
 		super ("Lobby Server");
 		setSize(600,600);
@@ -47,13 +49,16 @@ public class LobbyServer extends JFrame{
 					logout(username);
 				}
 				else if(type.equals("populate")){
-					serverView.append("Populating friends list.... "  + "\n");
+					counter++;
+					serverView.append("Populating friends list.... "  + counter + "\n");
 					PrintWriter pwr = new PrintWriter(s.getOutputStream());
 					ArrayList <String> tempfriends = new ArrayList <String>();
+					ArrayList <Boolean> tempcheckonline= new ArrayList <Boolean>();
 					tempfriends = findFriends(username);
-					checkOnline(tempfriends);
+					tempcheckonline = checkOnline(tempfriends);
 					for(int x = 0; x< tempfriends.size(); x++){
-						pwr.println(onlineornot.get(x));
+						pwr.println(tempcheckonline.get(x));
+						serverView.append(tempcheckonline.get(x) + " \n" );
 						pwr.println(tempfriends.get(x));		
 						pwr.flush();
 					}
@@ -68,9 +73,13 @@ public class LobbyServer extends JFrame{
 					pwr.flush();
 					serverView.append("Populating friends list.... "  + "\n");
 					ArrayList <String> tempfriends = new ArrayList <String>();
+					ArrayList <Boolean> tempcheckonline= new ArrayList <Boolean>();
 					tempfriends = findFriends(username);
+					tempcheckonline = checkOnline(tempfriends);
 					for(int x = 0; x< tempfriends.size(); x++){
-						pwr.println(tempfriends.get(x));
+						pwr.println(tempcheckonline.get(x));
+						serverView.append(tempcheckonline.get(x) + " \n" );
+						pwr.println(tempfriends.get(x));		
 						pwr.flush();
 					}
 					pwr.println("break-list");
@@ -95,7 +104,8 @@ public class LobbyServer extends JFrame{
 			System.exit(1);
 		}
 	}
-	private void checkOnline(ArrayList <String> names){
+	private ArrayList <Boolean> checkOnline(ArrayList <String> names){
+		onlineornot.clear();
 		for(int x = 0; x< names.size(); x++){
 			PreparedStatement select_user_query;
 			try {
@@ -114,8 +124,10 @@ public class LobbyServer extends JFrame{
 				e.printStackTrace();
 			}
 		}
+		return onlineornot;
 	}
 	private ArrayList <String> findFriends(String username){
+		friends.clear();
 		try {
 			PreparedStatement select_user_query;
 			select_user_query = c.prepareStatement("SELECT uid FROM user WHERE username = ?");
@@ -145,11 +157,13 @@ public class LobbyServer extends JFrame{
 		
 	}
 	private void logout(String username){
+		
 		try {
 			PreparedStatement query = c.prepareStatement("UPDATE user SET ready_to_play=false WHERE username = ?");
 			query.setString(1, username);
 			query.execute();
 			friends.clear();
+			onlineornot.clear();
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 			System.exit(1);
@@ -215,7 +229,8 @@ public class LobbyServer extends JFrame{
 	private void setupGUI(){
 		main = new JPanel(new BorderLayout());
 		serverView = new JTextArea();
-		main.add(serverView, BorderLayout.CENTER);
+		JScrollPane scroll = new JScrollPane (serverView);
+		main.add(scroll, BorderLayout.CENTER);
 		this.add(main);
 	}
 	

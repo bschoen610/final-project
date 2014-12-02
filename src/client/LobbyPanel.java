@@ -79,10 +79,12 @@ public class LobbyPanel extends JPanel implements ActionListener{
 		east.add(logout, BorderLayout.NORTH);
 		east.add(addFriend, BorderLayout.SOUTH);
 		this.add(east, BorderLayout.EAST);
+		JPanel center = new JPanel();
 		ImageIcon cow = new ImageIcon("./data/Cow.png");
 		JLabel cowLabel = new JLabel();
 		cowLabel.setIcon(cow);
-		this.add(cowLabel, BorderLayout.CENTER);
+		center.add(cowLabel);
+		this.add(center, BorderLayout.CENTER);
 		
 	}
 	

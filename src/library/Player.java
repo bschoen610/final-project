@@ -1,5 +1,6 @@
 package library;
 
+import java.net.Socket;
 import java.util.Vector;
 
 public class Player extends AbstractPlayer implements java.io.Serializable  { 
@@ -8,7 +9,8 @@ public class Player extends AbstractPlayer implements java.io.Serializable  {
 	 */
 	private static final long serialVersionUID = 7072489023475046711L;
 	private Vector<Hand> hands;
-	private int chipCount; 
+	//private int chipCount; 
+	private double currentCurrency;
 	private boolean canSplit; 
 	private Hand currentHand; 
 	private Dealer dealer; 
@@ -16,21 +18,25 @@ public class Player extends AbstractPlayer implements java.io.Serializable  {
 	//or hidden
 	private boolean isCurrent; 
 	private String userName; 
+	private Socket s;
 	
 	//Will the player necessarily have to know his own playerContainer? I'm not sure yet
 	
 	
-
-	public Player()
+	//TODO Need to figure out where i am going to set the Socket for my player class - need will's help 
+	
+	public Player(String userName, double currentCurrency)
 	{
 		hands = new Vector<Hand>(); 
 		Hand hand = new Hand(this); 
 		this.setCurrentHand(hand);
 		this.getHands().add(hand);
 		//to start
-		chipCount = 1000; 
+		//chipCount = 1000; 
 		isCurrent = false; 
 		canSplit = false; 
+		this.setUserName(userName);
+		this.setCurrentCurrency(currentCurrency);
 		
 	}
 
@@ -42,7 +48,7 @@ public class Player extends AbstractPlayer implements java.io.Serializable  {
 		this.hands = hands;
 	} 
 	
-	int getChipCount() {
+/*	int getChipCount() {
 		return chipCount;
 	}
 
@@ -51,7 +57,7 @@ public class Player extends AbstractPlayer implements java.io.Serializable  {
 		this.chipCount = chipCount;
 		this.getPcs().firePropertyChange("chipCount",oldChipCount, this.getChipCount() );
 	}
-	
+	*/
 	public Hand getCurrentHand()
 	{
 		return currentHand;
@@ -187,6 +193,22 @@ public class Player extends AbstractPlayer implements java.io.Serializable  {
 	public int getNumHands()
 	{
 		return this.getHands().size(); 
+	}
+
+	public double getCurrentCurrency() {
+		return currentCurrency;
+	}
+
+	public void setCurrentCurrency(double currentCurrency) {
+		this.currentCurrency = currentCurrency;
+	}
+
+	public Socket getSocket() {
+		return s;
+	}
+
+	public void setSocket(Socket s) {
+		this.s = s;
 	}
 }
 

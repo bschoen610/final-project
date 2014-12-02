@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -34,8 +35,10 @@ public class GamePanel extends JPanel implements ActionListener{
 	private String un = "";
 	private double chipCount = 0;
 	private JTextArea chipCountText = new JTextArea();
+	private ArrayList<Player> opponents = new ArrayList();
 	private static final long serialVersionUID = 239847298347L;
 	public GamePanel(String un, double balance) {
+		// TODO: need to wait/listen for other players to join, then call repaint
 		setupGUI();
 		this.un = un;
 		chipCount = balance;
@@ -79,12 +82,26 @@ public class GamePanel extends JPanel implements ActionListener{
 		
 	}
 	
+	private void addOpponent(Player newPlayer){
+		opponents.add(newPlayer);
+        updateUI();
+        revalidate();
+	}
+	
 	public void paintComponent(Graphics page)
 	{
 	    super.paintComponent(page);
 	    Image img = new ImageIcon("./data/cardmat.jpg").getImage();
 	    page.drawImage( img, 0, 0, null );
-	   
+	 
+	    // have some incremented integer to keep track of which number player to know where to draw the cards on the screen
+	    // something like page.drawImage(img, i * 50 + 50, i * 50 + 50, null)
+	    for(Player p : opponents){
+	    	for(Card c : p.hands.get(0)){
+	    		Image cardImage = new ImageIcon(c.imagePath).getImage();
+	    		page.drawImage(cardImage, 0, 0, null);
+	    	}
+	    }
 	    page.setColor(Color.RED);
 	    page.setFont(new Font("Helvetica", Font.BOLD, 20));
 		page.drawString("Chip count" + chipCount, 510, 530);

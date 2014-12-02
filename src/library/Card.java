@@ -8,7 +8,8 @@ public class Card extends AbstractBean implements Comparable<Card>,java.io.Seria
 	 * 
 	 */
 	private static final long serialVersionUID = -3235968207830808445L;
-
+	public String imagePath;
+	
 	public enum Suit{
 		CLUB(0, 'C'), 
 		DIAMOND(1, 'D'), 
@@ -92,13 +93,85 @@ public class Card extends AbstractBean implements Comparable<Card>,java.io.Seria
 		this.rank = Rank.ACE;
 		this.suit = Suit.SPADE;
 		this.faceUp = true; 
+		Character rankChar = rank.getSymbol();
+		Character suitChar = suit.getSymbol();
+		imagePath = getImagePath(rankChar, suitChar);
 	}
 	
 	public Card(Rank rank, Suit suit)
 	{
-		this.rank = rank; 
-		this.suit = suit; 
+		this.rank = rank;
+		this.suit = suit;
+		Character rankChar = rank.getSymbol();
+		Character suitChar = suit.getSymbol();
+		imagePath = getImagePath(rankChar, suitChar);
 	}
+	
+	private String getImagePath(Character rank, Character suit) {
+		String fullRank = "";
+		String fullSuit = "";
+		
+		if(rank.equals('2')){
+			fullRank = "2";
+		}
+		else if(rank.equals('3')){
+			fullRank = "3";
+		}
+		else if(rank.equals('4')){
+			fullRank = "4";
+		}
+		else if(rank.equals('5')){
+			fullRank = "5";
+		}
+		else if(rank.equals('6')){
+			fullRank = "6";
+		}
+		else if(rank.equals('7')){
+			fullRank = "7";
+		}
+		else if(rank.equals('8')){
+			fullRank = "8";
+		}
+		else if(rank.equals('9')){
+			fullRank = "9";
+		}
+		else if(rank.equals('T')){
+			fullRank = "10";
+		}
+		else if(rank.equals('J')){
+			fullRank = "jack";
+		}
+		else if(rank.equals('Q')){
+			fullRank = "queen";
+		}
+		else if(rank.equals('K')){
+			fullRank = "king";
+		}
+		else if(rank.equals('A')){
+			fullRank = "ace";
+		}
+		
+		if(suit.equals('C')){
+			fullSuit = "clubs";
+		}
+		else if(suit.equals('D')){
+			fullSuit = "diamonds";
+		}
+		else if(suit.equals('H')){
+			fullSuit = "hearts";
+		}
+		else if(suit.equals('S')){
+			fullSuit = "spades";
+		}
+		if(fullRank.equals("king") || fullRank.equals("queen") || fullRank.equals("jack")){
+			// do this to get the cooler version of these cards
+            return fullRank + "_of_" + fullSuit + "2.png";
+		}
+		else{
+            return fullRank + "_of_" + fullSuit + ".png";
+		}
+	}
+
 	@Override
 	public int compareTo(Card tempCard) {
 		int firstCompare = rank.compareTo(tempCard.rank);

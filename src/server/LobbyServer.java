@@ -163,6 +163,7 @@ public class LobbyServer extends JFrame{
 			query.setString(1, username);
 			ResultSet rs = query.executeQuery();
 			rs.next();
+			serverView.append("Getting Balance\n");
 			return rs.getDouble("currency");
 		}catch (SQLException sqle) {
 			sqle.printStackTrace();

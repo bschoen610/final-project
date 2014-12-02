@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
@@ -22,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -55,12 +57,18 @@ public class LobbyPanel extends JPanel implements ActionListener{
 	private void setupGUI(){
 		this.setLayout(new BorderLayout());
 		this.add(join, BorderLayout.WEST);
-		this.title = new JLabel("Welcome, " + this.un);
+		this.title = new JLabel("Welcome, " + this.un, JLabel.CENTER);
+		this.title.setVerticalAlignment(SwingConstants.TOP);
 		this.title.setFont(new Font("Serif", Font.BOLD, 20));
 		JPanel north = new JPanel();
-		north.add(title);
-		balanceLabel.setText("" + this.balance);
-		north.add(balanceLabel);
+		JPanel northContainer = new JPanel();
+		northContainer.setLayout(new BoxLayout(northContainer, BoxLayout.Y_AXIS));
+		northContainer.add(title);
+		getBalance();
+		this.balanceLabel.setText("Your current balance: $" + this.balance);
+		this.balanceLabel.setFont(new Font("Serif", Font.BOLD, 20));
+		northContainer.add(balanceLabel);
+		north.add(northContainer);
 		this.add(north, BorderLayout.NORTH);
 		JPanel east = new JPanel(new BorderLayout());
 		east.setBorder(new EmptyBorder(10,10,10,10));
@@ -71,6 +79,11 @@ public class LobbyPanel extends JPanel implements ActionListener{
 		east.add(logout, BorderLayout.NORTH);
 		east.add(addFriend, BorderLayout.SOUTH);
 		this.add(east, BorderLayout.EAST);
+		ImageIcon cow = new ImageIcon("./data/Cow.png");
+		JLabel cowLabel = new JLabel();
+		cowLabel.setIcon(cow);
+		this.add(cowLabel, BorderLayout.CENTER);
+		
 	}
 	
 	private void addEventHandler(){
@@ -185,6 +198,7 @@ public class LobbyPanel extends JPanel implements ActionListener{
 			PrintWriter pwr = new PrintWriter(s.getOutputStream());
 			pwr.println("Balance");
 			pwr.println(this.un);
+			pwr.flush();
 			
 			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 			double balance = Double.parseDouble(br.readLine());

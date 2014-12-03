@@ -12,11 +12,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -32,8 +33,9 @@ import javax.swing.text.Document;
 public class LobbyPanel extends JPanel implements ActionListener{
 	private static final long serialVersionUID = -8069773572372219648L;
 	private String un;
-
-	JTextPane friendList = new JTextPane();
+	ImageIcon loggedin = new ImageIcon("logged-in.png");
+	ImageIcon loggedout = new ImageIcon("logged-out.png");
+	JTextArea friendList = new JTextArea(10,10);
 	private JButton join = new JButton("Join Game");
 	private JLabel title;
 	private JButton logout = new JButton("Logout");
@@ -45,6 +47,7 @@ public class LobbyPanel extends JPanel implements ActionListener{
 		//setupAccountInfo();
 		setupGUI();
 		addEventHandler();
+		
 	}
 	public void append(String s) {
 		   try {
@@ -74,7 +77,6 @@ public class LobbyPanel extends JPanel implements ActionListener{
 		east.setBorder(new EmptyBorder(10,10,10,10));
 		JScrollPane scrollPane = new JScrollPane(friendList);
 		friendList.setEditable(false);
-		populateFriendList();
 		east.add(scrollPane, BorderLayout.CENTER);
 		east.add(logout, BorderLayout.NORTH);
 		east.add(addFriend, BorderLayout.SOUTH);
@@ -85,6 +87,13 @@ public class LobbyPanel extends JPanel implements ActionListener{
 		cowLabel.setIcon(cow);
 		center.add(cowLabel);
 		this.add(center, BorderLayout.CENTER);
+		populateFriendList();
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
+	        public void run() {
+	        	populateFriendList();
+	        }
+	    }, 3000, 3000);
 		
 	}
 	
@@ -129,11 +138,16 @@ public class LobbyPanel extends JPanel implements ActionListener{
 			    	if(counter %2 == 1)	// checks to see if line being read is a name or a boolean
 			    		append(" " + line);
 			    	else{
-			    		if(line.equals("true")){
-			    			friendList.insertIcon ( new ImageIcon ( "logged-in.png" ) );
+			    		if(line.equals("true")){	
+			    			//JLabel login =  new JLabel (loggedin);
+			    			//friendList.insertComponent(login);
+			    			append ("ON:   ");
 			    		}
-			    		else
-			    			friendList.insertIcon ( new ImageIcon ( "logged-out.png" ) );
+			    		else{
+			    			//JLabel logout =  new JLabel (loggedout);
+			    			//friendList.insertComponent(logout);
+			    			append("OFF:  ");
+			    		}
 			    	}
 			    }
 			    if(counter %2 == 1)

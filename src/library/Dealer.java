@@ -23,6 +23,7 @@ public class Dealer extends AbstractPlayer implements java.io.Serializable {
 		return deck;
 	}
 
+	//Done
 	public void setDeck(DeckOfCards deck) {
 		DeckOfCards oldDeck = this.getDeck(); 
 		this.deck = deck;

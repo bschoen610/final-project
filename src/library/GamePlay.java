@@ -168,11 +168,11 @@ public class GamePlay extends AbstractBean implements java.io.Serializable  {
 				Player currentPlayer = this.getPlayerContainer().getPlayerContainer().get(i);
 				if (currentPlayer.getHands().get(j).isBusted() == false){
 					//player wins his money 
-					currentPlayer.setChipCount(currentPlayer.getChipCount() + currentPlayer.getHands().get(j).getCurrentBet());						
+					currentPlayer.setCurrentCurrency(currentPlayer.getCurrentCurrency() + currentPlayer.getHands().get(j).getCurrentBet());						
 				}
 				else{
 					//player loses his money
-					currentPlayer.setChipCount(currentPlayer.getChipCount() - currentPlayer.getHands().get(j).getCurrentBet());
+					currentPlayer.setCurrentCurrency(currentPlayer.getCurrentCurrency() - currentPlayer.getHands().get(j).getCurrentBet());
 				}
 			}
 		}
@@ -194,15 +194,15 @@ public class GamePlay extends AbstractBean implements java.io.Serializable  {
 				Player currentPlayer = this.getPlayerContainer().getPlayerContainer().get(i);
 				int currentHandValue = currentPlayer.getHands().get(j).getRealValue();
 				if(currentHandValue > 21){
-					currentPlayer.setChipCount(currentPlayer.getChipCount() - currentPlayer.getHand(j).getCurrentBet());
+					currentPlayer.setCurrentCurrency(currentPlayer.getCurrentCurrency() - currentPlayer.getHand(j).getCurrentBet());
 				}
 				else if(currentHandValue > dealerValue){
-					currentPlayer.setChipCount(currentPlayer.getChipCount() + currentPlayer.getHands().get(j).getCurrentBet());						
+					currentPlayer.setCurrentCurrency(currentPlayer.getCurrentCurrency() + currentPlayer.getHands().get(j).getCurrentBet());						
 				}else if(currentHandValue == dealerValue){
 					//this means the player has pushed with the dealer
 					//nothing happens
 				}else{
-					currentPlayer.setChipCount(currentPlayer.getChipCount() - currentPlayer.getHands().get(j).getCurrentBet());
+					currentPlayer.setCurrentCurrency(currentPlayer.getCurrentCurrency() - currentPlayer.getHands().get(j).getCurrentBet());
 				}
 			}
 		}
@@ -252,11 +252,13 @@ public class GamePlay extends AbstractBean implements java.io.Serializable  {
 		
 		
 		//set things up for each player
-		for(int i = 0; i < numPlayers; i++)
+	/*	for(int i = 0; i < numPlayers; i++)
 		{
 			Player player = new Player(); 
 			this.addPlayer(player);			
-		}		
+		}	
+		
+	*/
 		
 	}
 	

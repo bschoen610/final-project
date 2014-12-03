@@ -17,8 +17,8 @@ public class DealerTest {
 	@Before
 	public void setUp() throws Exception {
 		dealer = new Dealer(); 
-		player1 = new Player(); 
-		player2 = new Player(); 
+		player1 = new Player("Ben", 1000); 
+		player2 = new Player("Garrett", 1000); 
 		dealer.setCurrentPlayer(player1);
 	}
 

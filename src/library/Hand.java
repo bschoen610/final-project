@@ -16,7 +16,7 @@ public class Hand extends AbstractBean implements java.io.Serializable {
 	private int lowestValue = 0; 
 	private int realValue = 0; 
 	private boolean isBusted; 
-	private int currentBet = 0; 
+	private double currentBet = 0; 
 	private boolean isBetPlaced;
 	private AbstractPlayer player; 
 
@@ -102,12 +102,12 @@ public class Hand extends AbstractBean implements java.io.Serializable {
 		this.getPcs().firePropertyChange("isBusted", oldBusted, this.isBusted());
 	}
 
-	public int getCurrentBet() {
+	public double getCurrentBet() {
 		return currentBet;
 	}
 
-	public void setCurrentBet(int currentBet) {
-		int oldBet = this.getCurrentBet();
+	public void setCurrentBet(double currentBet) {
+		double oldBet = this.getCurrentBet();
 		this.currentBet = currentBet;
 		this.getPcs().firePropertyChange("currentBet", oldBet, this.getCurrentBet());
 	}

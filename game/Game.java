@@ -13,6 +13,13 @@ public class Game implements Serializable {
 		MOVE,
 	}
 	
+	enum Move {
+		HIT,
+		STAY,
+		DOUBLE,
+		SPLIT,
+	}
+	
 	public HashMap<String, Player> playerMap;
 	Vector<Player> players;
 	Deck deck;

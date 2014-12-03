@@ -30,4 +30,23 @@ public class Hand implements Serializable {
 		this.cards.remove(idx);
 	}
 	
+	public int getSum() {
+		int sum = 0;
+		int aceCount = 0;
+		
+		for (Card card : this.cards) {
+			if (card.num >= 9) {
+				sum += 10;
+			} else if (card.num == 0) {
+				sum += 11;
+				++aceCount;
+			} else {
+				sum += card.num + 1;
+			}
+		}
+		
+		while (aceCount > 0) sum -= 10;
+		
+		return sum;
+	}
 }

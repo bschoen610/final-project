@@ -33,15 +33,14 @@ public class GamePanel extends JPanel implements ActionListener{
 	private JButton leave = new JButton("Leave");
 	private JTextField betAmount = new JTextField(25);
 	private String un = "";
-	private double chipCount = 0;
-	private JTextArea chipCountText = new JTextArea();
+	private double balance = 0;
 	private ArrayList<Player> opponents = new ArrayList();
 	private static final long serialVersionUID = 239847298347L;
 	public GamePanel(String un, double balance) {
 		// TODO: need to wait/listen for other players to join, then call repaint
 		setupGUI();
 		this.un = un;
-		chipCount = balance;
+		this.balance = balance;
 		try {
 			s = new Socket("localhost", 60502);
 			oos = new ObjectOutputStream(s.getOutputStream());
@@ -104,7 +103,7 @@ public class GamePanel extends JPanel implements ActionListener{
 	    }
 	    page.setColor(Color.RED);
 	    page.setFont(new Font("Helvetica", Font.BOLD, 20));
-		page.drawString("Chip count" + chipCount, 510, 530);
+		page.drawString("Balance " + balance, 510, 530);
 	}
 
 	public void actionPerformed(ActionEvent ae) {

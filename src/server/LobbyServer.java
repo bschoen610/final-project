@@ -36,10 +36,11 @@ public class LobbyServer extends JFrame{
 		try{
 			@SuppressWarnings("resource")
 			ServerSocket ss = new ServerSocket(3001);
-			c = DriverManager.getConnection("jdbc:mysql://localhost/CardShark", "root", "");
+			c = DriverManager.getConnection("jdbc:mysql://localhost/CardShark", "root", "3Rdplacespel");
 		
 			while (true) {
 				Socket s = ss.accept();
+				serverView.append("hi");
 				BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));	
 				String type = br.readLine();
 				String username = br.readLine();
@@ -71,14 +72,12 @@ public class LobbyServer extends JFrame{
 					PrintWriter pwr = new PrintWriter(s.getOutputStream());
 					pwr.println(addFriend(username, friend));
 					pwr.flush();
-					serverView.append("Populating friends list.... "  + "\n");
 					ArrayList <String> tempfriends = new ArrayList <String>();
 					ArrayList <Boolean> tempcheckonline= new ArrayList <Boolean>();
 					tempfriends = findFriends(username);
 					tempcheckonline = checkOnline(tempfriends);
 					for(int x = 0; x< tempfriends.size(); x++){
 						pwr.println(tempcheckonline.get(x));
-						serverView.append(tempcheckonline.get(x) + " \n" );
 						pwr.println(tempfriends.get(x));		
 						pwr.flush();
 					}
@@ -88,6 +87,15 @@ public class LobbyServer extends JFrame{
 				else if (type.equals("Balance")){
 					PrintWriter pwr = new PrintWriter(s.getOutputStream());
 					pwr.println(getBalance(username));
+					pwr.flush();
+				}
+				else if (type.equals("Chat")){
+					
+					String recipient = br.readLine();
+					String message = br.readLine();
+					PrintWriter pwr = new PrintWriter(s.getOutputStream());
+					pwr.println(recipient);
+					pwr.println(message);
 					pwr.flush();
 				}
 				else {
